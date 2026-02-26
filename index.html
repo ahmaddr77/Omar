@@ -13,7 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
   
-  
+  <!-- إضافة مكتبة تيليجرام للـ Mini App -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
     /* Enhanced Protection Styles: Disable selection, copying, and printing */
@@ -1505,6 +1506,26 @@
       let navigationHistory = [];
       let activeModalId = null;
 
+      // --- إعدادات Telegram Mini App ---
+      const tg = window.Telegram ? window.Telegram.WebApp : null;
+      if (tg) {
+          tg.expand();
+          tg.BackButton.onClick(() => {
+              window.history.back();
+          });
+      }
+
+      function updateTelegramBackButton() {
+          if (!tg) return;
+          // إخفاء زر الرجوع إذا كنا في الشاشة الرئيسية ولا يوجد مودال مفتوح
+          if ((navigationHistory.length <= 1 || (navigationHistory.length === 1 && navigationHistory[0] === 'college-screen')) && !activeModalId) {
+              tg.BackButton.hide();
+          } else {
+              tg.BackButton.show();
+          }
+      }
+      // -----------------------------------
+
       let timerInterval = null;
       let timerSeconds = 0;
       let isTimerRunning = false;
@@ -1680,6 +1701,7 @@
           } else {
               history.pushState(newState, '', '#' + modalId);
           }
+          updateTelegramBackButton();
       }
 
       function hideModal(modalId, goBack = true) {
@@ -1694,6 +1716,7 @@
                   history.back();
               }
           }
+          updateTelegramBackButton();
       }
 
       function showScreen(screenId, push = false) {
@@ -1748,6 +1771,7 @@
                   history.pushState({ screen: screenId, nav: [...navigationHistory] }, '', '#' + screenId);
               }
           }
+          updateTelegramBackButton();
       }
 
       window.onpopstate = (e) => {
@@ -1782,6 +1806,7 @@
               if (modal) modal.classList.remove('active');
               activeModalId = null;
           }
+          updateTelegramBackButton();
       };
 
       function saveScrollPosition() {
@@ -2626,6 +2651,7 @@
               history.replaceState({ screen: 'college-screen', nav: ['college-screen'] }, '', '#college-screen');
               loadMainScreen();
           }
+          updateTelegramBackButton();
       }
 
       function renderFloatingMenu() {
@@ -3028,6 +3054,9 @@
         window.hideModal = hideModal;
         window.hideNoteModal = hideNoteModal;
         window.closeCodeModal = closeCodeModal;
+        
+        // التأكد من تحديث حالة زر التلغرام عند البداية
+        updateTelegramBackButton();
       })();
     }
   </script>
