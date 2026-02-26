@@ -1,109 +1,3049 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>واجهة ثابتة</title>
-    <style>
-        /* إلغاء أي هوامش ومنع التمرير في الصفحة بالكامل */
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* منع التمرير العمودي والأفقي نهائياً */
-            background-color: #212470; /* لون الخلفية كما في الصورة */
-            position: fixed; /* تثبيت الجسم لمنع الاهتزاز في بعض المتصفحات */
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>NEOM - التطبيق التعليمي</title>
+  
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4A90E2" />
+  <link rel="apple-touch-icon" href="https://i.imgur.com/8pP1bS6.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
+  
+  
+  
+  <style>
+    /* Enhanced Protection Styles: Disable selection, copying, and printing */
+    body {
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none;    /* Firefox */
+      -ms-user-select: none;     /* IE10+/Edge */
+      user-select: none;         /* Standard */
+      -webkit-touch-callout: none; /* Disable callouts on iOS */
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Enhanced protection against text selection and copying */
+    * {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    /* Allow minimal text selection only in specific elements if needed */
+    .question-text, .idea-content-box, .rendered-content {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+    
+    /* Disable image dragging */
+    img {
+      -webkit-user-drag: none;
+      -khtml-user-drag: none;
+      -moz-user-drag: none;
+      -o-user-drag: none;
+      user-drag: none;
+    }
+    
+    @media print {
+      body * {
+        display: none !important;
+      }
+      body::before {
+        content: "الطباعة معطلة لهذا المحتوى.";
+        display: block;
+        text-align: center;
+        font-size: 24px;
+        padding: 50px;
+        color: black;
+      }
+    }
 
-        /* الحاوية الرئيسية */
-        .full-screen-container {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative; /* ضروري لتموضع الزر فوق الصورة */
-        }
+    /* ========== افتتاحية NEOM المعدلة ========== */
+    :root {
+      --neom-blue: #0078FF;
+      --neom-dark-blue: #0056CC;
+      --neom-light-blue: #4A9CFF;
+      --neom-green: #00D4AA;
+      --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      overflow: hidden;
+      transition: opacity 0.5s var(--transition-smooth), transform 0.5s var(--transition-smooth);
+    }
+    
+    .splash-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    
+    .logo-container {
+      position: relative;
+      width: 100%;
+      height: 40%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+    }
+    
+    .letters-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .letter {
+      font-size: 8rem;
+      font-weight: 900;
+      color: var(--neom-blue);
+      opacity: 0;
+      transform: translateY(100px) scale(0.5);
+      text-shadow: 0 10px 20px rgba(0, 120, 255, 0.3);
+      font-family: 'Amiri', serif;
+      margin: 0 10px;
+      display: inline-block;
+      transition: all 0.3s var(--transition-bounce);
+    }
+    
+    .letter.N {
+      animation: letterAppear 1.2s ease-out 0.5s forwards,
+                 letterGlow 2s ease-in-out 1.7s infinite alternate;
+    }
+    
+    .letter.E {
+      animation: letterAppear 1.2s ease-out 0.7s forwards,
+                 letterGlow 2s ease-in-out 1.9s infinite alternate;
+    }
+    
+    .letter.O {
+      animation: letterAppear 1.2s ease-out 0.9s forwards,
+                 letterGlow 2s ease-in-out 2.1s infinite alternate;
+    }
+    
+    .letter.M {
+      animation: letterAppear 1.2s ease-out 1.1s forwards,
+                 letterGlow 2s ease-in-out 2.3s infinite alternate;
+    }
+    
+    .particles-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: var(--neom-blue);
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleFloat 3s ease-in-out infinite;
+      transition: all 0.3s ease;
+    }
+    
+    .loading-bar {
+      position: absolute;
+      bottom: 20%;
+      width: 80%;
+      max-width: 400px;
+      height: 6px;
+      background-color: rgba(0, 120, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .loading-progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--neom-blue), var(--neom-green));
+      border-radius: 10px;
+      animation: loadingFill 3s var(--transition-smooth) forwards;
+      box-shadow: 0 0 10px rgba(0, 120, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .tagline {
+      position: absolute;
+      bottom: 15%;
+      color: var(--neom-blue);
+      font-size: 1.2rem;
+      font-weight: 500;
+      opacity: 0;
+      animation: fadeIn 1s ease-out 2.5s forwards;
+      font-family: 'Tajawal', sans-serif;
+      transition: all 0.3s ease;
+    }
+    
+    .background-elements {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 120, 255, 0.1) 0%, rgba(0, 120, 255, 0) 70%);
+      animation: pulse 4s ease-in-out infinite;
+      transition: all 0.5s ease;
+    }
+    
+    .circle-1 {
+      width: 300px;
+      height: 300px;
+      top: 10%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+    
+    .circle-2 {
+      width: 200px;
+      height: 200px;
+      bottom: 15%;
+      right: 15%;
+      animation-delay: 1s;
+    }
+    
+    .circle-3 {
+      width: 150px;
+      height: 150px;
+      top: 50%;
+      right: 10%;
+      animation-delay: 2s;
+    }
+    
+    /* Animations للافتتاحية */
+    @keyframes letterAppear {
+      0% {
+        opacity: 0;
+        transform: translateY(100px) scale(0.5);
+      }
+      70% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.1);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    @keyframes letterGlow {
+      0% {
+        text-shadow: 0 5px 15px rgba(0, 120, 255, 0.4);
+      }
+      100% {
+        text-shadow: 0 10px 30px rgba(0, 120, 255, 0.8), 0 0 20px rgba(0, 212, 170, 0.4);
+      }
+    }
+    
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) translateX(20px);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes loadingFill {
+      0% {
+        width: 0%;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+    
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.4;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+    }
+    
+    /* Responsive adjustments للافتتاحية */
+    @media (max-width: 768px) {
+      .letter {
+        font-size: 6rem;
+        margin: 0 5px;
+      }
+      
+      .tagline {
+        font-size: 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .letter {
+        font-size: 4rem;
+        margin: 0 3px;
+      }
+      
+      .tagline {
+        font-size: 0.9rem;
+      }
+    }
 
-        /* تنسيق الصورة لتكون خلفية ثابتة تماماً */
-        .bg-image {
-            width: 100%;
-            height: 100%;
-            /* جعل الصورة تظهر بكامل حدودها من الأعلى */
-            background-image: url('1.jpg'); 
-            background-size: contain; 
-            background-position: top center;
-            background-repeat: no-repeat;
-            
-            /* منع سحب الصورة أو التفاعل معها */
-            user-select: none;
-            -webkit-user-drag: none;
-            /* تم إزالة pointer-events: none للسماح بالتفاعل مع الحاوية والزر */
-        }
+    /* Original Styles */
+    :root{
+      --bg: #F8F9FA;
+      --card: #FFFFFF;
+      --primary: linear-gradient(45deg, #4A90E2 0%, #1A73E8 100%);
+      --primary-solid: #4A90E2;
+      --text: #333333;
+      --text-subtle: #7A8699;
+      --border: #E8EBF0;
+      --success: #28a745;
+      --danger: #E03131;
+      --warning: #FFC107;
+      --warning-dark-text: #B38600;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --screen-padding: 20px;
+      --font-base: 'Amiri', 'Traditional Arabic', serif;
+      --font-primary: 'Amiri', 'Traditional Arabic', serif;
+      --font-content: 'Tajawal', sans-serif;
+    }
+    body.dark-mode {
+        --bg: #121212;
+        --card: #1E1E1E;
+        --text: #E0E0E0;
+        --text-subtle: #A0A0A0;
+        --border: #333333;
+        --shadow-color: rgba(255, 255, 255, 0.08);
+        --warning: #FFD54F;
+        --warning-dark-text: #FFC107;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      height:100%; width:100%; margin:0; padding:0; overflow:hidden;
+      background: var(--bg); color:var(--text);
+      font-family:var(--font-base);
+      transition: background-color 0.3s var(--transition-smooth), color 0.3s var(--transition-smooth);
+    }
+    .app{
+      width:100%; max-width:none !important; height:100vh; margin:0 auto;
+      display:flex; align-items:center; justify-content:center;
+      padding:0 !important;
+      position:relative;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .viewport{width:100%;height:100%;position:relative}
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 25px;
+      text-align: center;
+      font-family: var(--font-primary);
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .screen{
+      display:none;
+      height:100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth);
+    }
+    .screen.active{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .card{
+      width:100%; background: var(--card); border-radius: 20px;
+      padding: var(--screen-padding); border: 1px solid var(--border);
+      box-shadow: 0 8px 25px -5px var(--shadow-color), 0 5px 10px -6px var(--shadow-color);
+      max-height:calc(100vh - 40px); overflow:auto; text-align:right;
+      max-width: 420px;
+      position: relative;
+      z-index: 5;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .card::-webkit-scrollbar {width: 0px !important; background: transparent !important;}
+    .card { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .pull-to-refresh-loader {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(-70px);
+        transition: transform 0.3s var(--transition-smooth);
+        z-index: 2;
+        pointer-events: none;
+    }
+    .pull-to-refresh-loader .spinner {
+        width: 30px;
+        height: 30px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: var(--primary-solid);
+        border-radius: 50%;
+        opacity: 0;
+        transition: opacity 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth);
+    }
+    .pull-to-refresh-loader.visible {
+        transform: translateY(0);
+    }
+    .pull-to-refresh-loader.refreshing {
+        transform: translateY(0);
+        transition: transform 0.3s var(--transition-smooth);
+    }
+    .pull-to-refresh-loader.visible .spinner {
+        opacity: 1;
+    }
+    .pull-to-refresh-loader.refreshing .spinner {
+        opacity: 1;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    #college-screen.ptr-down .card {
+        transition: transform 0.3s var(--transition-smooth);
+    }
 
-        /* تنسيق الزر الشفاف تماماً */
-        .invisible-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* للمنتصف تماماً */
-            width: 200px;  /* يمكنك تكبير أو تصغير مساحة النقر من هنا */
-            height: 100px; /* يمكنك تكبير أو تصغير مساحة النقر من هنا */
-            background: transparent; /* شفاف تماماً */
-            border: none;           /* بلا حدود */
-            outline: none;          /* بلا إطار تركيز */
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* يمنع ظهور اللون الأزرق عند النقر في الهواتف */
+    .choice-frame, .subject-choice-frame {
+        font-family: var(--font-primary);
+        font-weight: 700 !important;
+        margin: 0; padding: 20px 25px !important; border-radius: 12px; width: 100%;
+        border: 1px solid var(--primary-solid); background: rgba(74, 144, 226, 0.08);
+        color: var(--primary-solid); font-size: 18px; cursor: pointer;
+        transition: all 0.3s var(--transition-smooth); text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 75px;
+        position: relative;
+        overflow: hidden;
+    }
+    .choice-frame::before, .subject-choice-frame::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s var(--transition-smooth);
+    }
+    .choice-frame:hover::before, .subject-choice-frame:hover::before {
+        left: 100%;
+    }
+    .choice-frame:hover { 
+        background: rgba(74, 144, 226, 0.15); 
+        /* إزالة تأثير الحركة */
+        /* transform: translateY(-2px); */
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    }
+    #fav-category-btn {
+        margin-top: 15px;
+    }
+    #fav-category-btn .fav-star-wrapper {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 1;
+        margin: 0 2px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    #fav-category-btn .fav-star-wrapper::before {
+        content: '˙';
+        position: absolute;
+        top: -0.7em;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        color: var(--primary-solid);
+        transition: all 0.3s var(--transition-smooth);
+    }
+    #fav-category-btn .fav-star {
+        color: #FFD700;
+        font-size: 1.1em;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .subject-item-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .subject-choice-frame {
+        flex-grow: 1;
+        text-align: right;
+        justify-content: flex-start;
+        padding: 20px 15px !important;
+    }
+    .stats-btn {
+        width: 45px;
+        height: 75px;
+        border-radius: 12px;
+        background-color: var(--primary-solid);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s var(--transition-smooth);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .stats-btn:hover { 
+        background-color: #1A73E8; 
+        transform: scale(1.05);
+    }
+    .stats-btn svg {
+        width: 24px;
+        height: 24px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    button.btn {
+        width: 100%; padding: 15px; border-radius: 12px; margin-bottom: 15px;
+        font-size: 16px; font-weight: 700; cursor: pointer; border: none;
+        transition: all 0.3s var(--transition-smooth);
+        font-family: var(--font-primary);
+        position: relative;
+        overflow: hidden;
+    }
+    .btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+    }
+    .btn:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
+    }
+    @keyframes ripple {
+        0% {
+            transform: scale(0, 0);
+            opacity: 0.5;
         }
-
-        /* دعم العرض على الكمبيوتر ليبقى بشكل هاتف */
-        @media (min-width: 500px) {
-            body {
-                background-color: #000;
-            }
-            .full-screen-container {
-                width: 450px;
-                height: 100vh;
-                margin: 0 auto;
-                box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            }
+        100% {
+            transform: scale(20, 20);
+            opacity: 0;
         }
-    </style>
-</head>
-<body scroll="no">
+    }
+    .btn-primary { background: var(--primary-solid); color: #fff; }
+    .btn-primary:hover { 
+        background: #1A73E8; 
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+    }
+    .btn-secondary { background: var(--bg); color: var(--primary-solid); border: 1px solid var(--primary-solid); }
+    .btn-secondary:hover { 
+        background: rgba(74, 144, 226, 0.08); 
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    }
+    #year-choice-modal .list button {
+        font-family: var(--font-primary) !important;
+        font-weight: 700 !important;
+    }
+    body.question-mode-active #question-screen {align-items: flex-start; justify-content: flex-start;}
+    body.question-mode-active #question-screen .card {
+      padding: 0 !important;
+      max-height: 100vh !important; overflow-y: auto; border-radius: 0 !important;
+      border: none !important; box-shadow: none !important;
+      background: var(--bg); width: 100%; max-width: none !important; height: 100%;
+      z-index: 1;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .question-wrapper{
+      margin-bottom: var(--screen-padding); padding: var(--screen-padding);
+      background: var(--card); border-radius: 15px; border: 1px solid var(--border);
+      box-shadow: 0 4px 10px -2px var(--shadow-color);
+      margin-left: auto; margin-right: auto; max-width: 600px; width: 100%;
+      position: relative;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .question-wrapper:first-child {margin-top: var(--screen-padding);}
+    .question-text {
+        font-size: 17px; /* كان 17px */
+        line-height: 1.6; font-weight: 700; color: var(--text);
+        margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;
+        font-family: var(--font-content);
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .answers {display: flex; flex-direction: column; gap: 12px; margin-top: 20px;}
+    .answers button{
+      margin: 0; padding:20px 25px !important; border-radius:12px; width:100%;
+      border: 1px solid var(--primary-solid);
+      background: rgba(74, 144, 226, 0.08);
+      color: var(--primary-solid);
+      font-size:16px; font-weight:700; cursor:pointer; transition: all 0.3s var(--transition-smooth);
+      text-align: right; height: auto; white-space: pre-wrap;
+      font-family: var(--font-content);
+      position: relative;
+      overflow: hidden;
+    }
+    .answers button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(74, 144, 226, 0.1), transparent);
+        transition: left 0.6s var(--transition-smooth);
+    }
+    .answers button:hover::before {
+        left: 100%;
+    }
+    .answers button:hover{
+        background: rgba(74, 144, 226, 0.15);
+        /* إزالة تأثير الحركة */
+        /* transform: translateY(-2px); */
+    }
+    .answers button:disabled { opacity: 0.8; cursor: default; }
+    .correct{
+        background: var(--success) !important;
+        color: #fff !important;
+        border-color: var(--success) !important;
+        transform: scale(1.02);
+        transition: all 0.3s var(--transition-bounce);
+    }
+    .wrong{
+        background: var(--danger) !important;
+        color: #fff !important;
+        border-color: var(--danger) !important;
+        transform: scale(1.02);
+        transition: all 0.3s var(--transition-bounce);
+    }
+    .idea-content-box {
+        margin-top: 15px; padding: 15px; background-color: var(--bg);
+        border-radius: 8px; border-right: 4px solid var(--primary-solid);
+        line-height: 1.7; font-size: 16px; /* كان 16px */
+        color: var(--text);
+        font-family: var(--font-content);
+        font-weight: 700;
+        transition: all 0.3s var(--transition-smooth);
+    }
 
-    <div class="full-screen-container">
-        <div id="main-bg" class="bg-image"></div>
+    /* --- هذا هو التصحيح لمشكلة النص الطويل --- */
+    .rendered-content {
+        overflow-wrap: break-word; /* خاصية حديثة لالتفاف النص */
+        word-wrap: break-word;     /* دعم للمتصفحات الأقدم */
+        transition: all 0.3s var(--transition-smooth);
+    }
+    /* --- نهاية التصحيح --- */
+
+    .rendered-content img, .rendered-content video { max-width: 100%; border-radius: 8px; margin-top: 10px; transition: all 0.3s var(--transition-smooth); }
+    .rendered-content video { background-color: #000; }
+    .rendered-content iframe { width: 100%; min-height: 300px; border: 1px solid var(--border); border-radius: 8px; margin-top: 10px; transition: all 0.3s var(--transition-smooth); }
+    .rendered-content strong.special-text { color: var(--primary-solid); font-weight: 700; transition: all 0.3s var(--transition-smooth); }
+    .question-actions {
+        display: flex; gap: 10px; margin-top: 15px; padding-top: 15px;
+        border-top: 1px solid var(--primary-solid);
+        justify-content: flex-end; align-items: center;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .question-actions button {
+        height: 44px; border-radius: 10px; cursor: pointer; font-weight: 500;
+        transition: all 0.3s var(--transition-smooth); border: none; display: flex; align-items: center; justify-content: center;
+        padding: 0 15px; flex-shrink: 0;
+        font-family: var(--font-base);
+    }
+    .fav-btn {
+        background: transparent;
+        border: 2px solid var(--primary-solid);
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        transition: all 0.3s var(--transition-bounce);
+        margin-left: 0;
+        color: #FFD700;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .fav-btn:hover {
+        background: rgba(74, 144, 226, 0.08);
+        transform: scale(1.1);
+    }
+    .fav-btn.favorited {
+      background-color: #FFC107;
+      border-color: #FFC107;
+      color: #fff;
+      transform: scale(1.1);
+    }
+    .explain-btn-inline { background: var(--primary-solid); color: #fff; flex-grow: 0; }
+    .explain-btn-inline:hover {
+        transform: scale(1.05);
+    }
+    
+    .note-btn-inline {
+        background: var(--bg);
+        color: var(--text-subtle);
+        border: 1px solid var(--border);
+        flex-grow: 0;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .note-btn-inline:hover {
+        transform: scale(1.05);
+    }
+    .note-btn-inline.has-note {
+        background: var(--warning);
+        color: #fff;
+        border-color: var(--warning);
+        font-weight: 700;
+        transform: scale(1.05);
+    }
+
+    .source-btn-inline {
+        background: rgba(40, 167, 69, 0.1); color: var(--success);
+        border: 1px solid var(--success); font-size: 13px; font-weight: 700;
+        flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; margin-left: auto;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .source-btn-inline:hover {
+        transform: scale(1.02);
+    }
+    
+    
+    
+    #floatingMenuBtn{
+      position:fixed;
+      top: 10px;
+      left: 10px;
+      z-index:1500;
+      width: 48px;
+      height: 48px;
+      background: none;
+      border: none;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 0;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    #floatingMenuBtn svg{
+      stroke: var(--primary-solid);
+      width:28px;
+      height:28px;
+      stroke-width:3;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    #floatingMenuBtn:hover {
+        transform: scale(1.1);
+    }
+    #floatingMenu.modal-overlay{z-index:2000}
+    #floatingMenu .modal-content{max-width:300px;padding:20px}
+    #floating-menu-container{display:flex;flex-direction:column;gap:10px}
+    .menu-group-title{color:var(--primary-solid);font-weight:700;font-size:16px;margin-top:15px;margin-bottom:5px;border-bottom:1px solid var(--primary-solid);padding-bottom:5px;text-align:right; font-family: var(--font-primary); transition: all 0.3s var(--transition-smooth);}
+    .menu-icon-btn-group { display: flex; justify-content: space-around; gap: 10px; margin-top: 10px; }
+    .menu-icon-btn { background: var(--card); border: 1px solid var(--border); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s var(--transition-smooth); }
+    .menu-icon-btn:hover { background: rgba(74, 144, 226, .08); transform: scale(1.1); }
+    .menu-icon-btn svg { width: 24px; height: 24px; stroke: var(--primary-solid); fill: none; stroke-width: 2; transition: all 0.3s var(--transition-smooth); }
+    .menu-large-btn { width: 100%; padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; transition: all 0.3s var(--transition-smooth); background: var(--primary-solid); color: #fff; font-family: var(--font-primary);}
+    .menu-large-btn:hover { background: #1A73E8; transform: translateY(-2px); }
+    .menu-secondary-btn {
+        background: var(--primary-solid);
+        color: #fff;
+        border: none;
+        font-weight: 700;
+        font-size: 15px;
+        padding: 12px;
+        margin: 0;
+        border-radius: 10px;
+        transition: all 0.3s var(--transition-smooth);
+        text-align: center;
+        cursor: pointer;
+        font-family: var(--font-primary);
+    }
+    .menu-secondary-btn:hover { background: #1A73E8; transform: translateY(-2px); }
+    .menu-footer-text { font-size: 12px; color: var(--text-subtle); text-align: center; margin-top: 20px; transition: all 0.3s var(--transition-smooth); }
+    .timer-control-wrapper {
+        display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        background: var(--bg); padding: 8px 12px; border-radius: 10px; margin-top: 5px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    #timer-display { font-size: 18px; font-weight: 700; color: var(--primary-solid); letter-spacing: 1px; transition: all 0.3s var(--transition-smooth); }
+    #timer-toggle-btn { padding: 8px 15px; font-size: 14px; margin: 0; flex-grow: 1; transition: all 0.3s var(--transition-smooth); }
+    #timer-toggle-btn:hover {
+        transform: translateY(-1px);
+    }
+    #subjectStatsModal .modal-content { max-width: 400px; }
+    .stat-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--primary-solid);
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .stat-detail-row:last-child { border-bottom: none; }
+    .stat-detail-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary-solid);
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .stats-container{text-align:center}
+    .chart-container{position:relative;width:150px;height:150px;margin:20px auto}
+    .stat-circle{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--primary-solid);background:radial-gradient(var(--card) 60%,transparent 61%),conic-gradient(var(--success) calc(var(--percentage,0)*1%),var(--danger) 0);transition:background .5s var(--transition-smooth)}
+    .stats-details{display:flex;justify-content:space-around;margin-top:25px;font-size:14px}
+    .stat-item{display:flex;flex-direction:column; transition: all 0.3s var(--transition-smooth);}
+    .stat-item span:first-child{font-weight:700;font-size:18px;color:var(--text); transition: all 0.3s var(--transition-smooth);}
+    .stat-item label{color:var(--text-subtle); transition: all 0.3s var(--transition-smooth);}
+    .modal-overlay{
+        display:none;
+        position:fixed;
+        z-index:1000;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        background-color:rgba(0,0,0,.6);
+        backdrop-filter:blur(5px);
+        -webkit-backdrop-filter:blur(5px);
+        justify-content:center;
+        align-items:center;
+        opacity:0;
+        transition:opacity .3s var(--transition-smooth);
+        text-align:right
+    }
+    .modal-overlay.active{
+        display:flex;
+        opacity:1;
+    }
+    .modal-content{
+        background:var(--card);
+        border-radius:20px;
+        padding:25px;
+        width:90%;
+        max-width:380px;
+        box-shadow:0 10px 30px rgba(0,0,0,.2);
+        transform:translateY(20px) scale(0.95);
+        transition:transform .3s var(--transition-smooth), opacity .3s var(--transition-smooth);
+        position:relative;
+        pointer-events:auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    #floatingMenu .modal-content {
+        max-height: none;
+        overflow-y: visible;
+    }
+    .modal-overlay.active .modal-content{
+        transform:translateY(0) scale(1);
+    }
+    .close-btn{
+        position:absolute;
+        top:15px;
+        left:15px;
+        background:none;
+        border:none;
+        font-size:24px;
+        color:var(--text-subtle);
+        cursor:pointer;
+        transition:color .3s var(--transition-smooth), transform .3s var(--transition-smooth);
+    }
+    .close-btn:hover{
+        color:var(--danger);
+        transform: scale(1.1);
+    }
+    #explanation-modal .modal-content{max-width:500px}
+    #modal-explanation-text{line-height:1.6}
+    
+    #note-textarea {
+         width: 100%; 
+         min-height: 150px; 
+         border-radius: 8px; 
+         border: 1px solid var(--border); 
+         background: var(--bg); 
+         color: var(--text); 
+         padding: 10px; 
+         font-family: var(--font-content);
+         resize: vertical;
+         transition: all 0.3s var(--transition-smooth);
+    }
+
+    #toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+    .toast{
+        background:var(--card);
+        color:var(--text);
+        padding:12px 25px;
+        border-radius:10px;
+        box-shadow:0 4px 15px rgba(0,0,0,.2);
+        opacity:0;
+        animation:toast-in .3s var(--transition-smooth) forwards,toast-out .3s var(--transition-smooth) 1.7s forwards;
+        font-weight:500;
+        min-width:200px;
+        text-align:center;
+        border:1px solid var(--border);
+        transform-origin: center top;
+    }
+    .toast.success{background-color:var(--success);color:#fff;border-color:var(--success)}
+    .toast.danger{background-color:var(--danger);color:#fff;border-color:var(--danger)}
+    @keyframes toast-in{from{opacity:0;transform:translateY(-20px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes toast-out{to{opacity:0;transform:translateY(-20px) scale(0.9)}}
+
+    #scroll-indicator-dot {
+        position: fixed;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 40px;
+        background-color: var(--primary-solid);
+        border-radius: 4px;
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s var(--transition-smooth), top 0.1s linear;
+        will-change: top, opacity;
+    }
+    #scroll-indicator-dot.visible {
+        opacity: 1;
+    }
+    
+    #paymentModal .modal-content {
+        max-width: 480px; 
+    }
+    .payment-options-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: flex-start;
+        gap: 20px;
+        margin-top: 15px;
+    }
+    .payment-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        flex: 1;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .payment-option:hover {
+        transform: translateY(-5px);
+    }
+    .payment-option h4 {
+        font-size: 14px;
+        font-weight: 700;
+        font-family: var(--font-content);
+        color: var(--text-subtle);
+        margin-bottom: 10px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .payment-option img {
+        max-width: 100%;
+        width: 160px;
+        height: 160px;
+        object-fit: contain;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .payment-option:hover img {
+        transform: scale(1.05);
+    }
+    .payment-option .btn {
+        width: 100%;
+        margin: 0;
+        padding: 12px;
+        font-size: 14px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    
+    .highlight-red, .highlight-green, .highlight-yellow, .highlight-blue {
+        padding: 3px 8px;
+        margin: 0 2px;
+        border-radius: 8px;
+        font-weight: 700;
+        line-height: 1.5;
+        display: inline-block;
+        border: 1px solid transparent;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .highlight-red {
+        background-color: rgba(224, 49, 49, 0.1);
+        color: var(--danger);
+        border-color: rgba(224, 49, 49, 0.2);
+    }
+    .highlight-green {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--success);
+        border-color: rgba(40, 167, 69, 0.2);
+    }
+    .highlight-yellow {
+        background-color: rgba(255, 193, 7, 0.15);
+        color: var(--warning-dark-text);
+        border-color: rgba(255, 193, 7, 0.3);
+    }
+    .highlight-blue {
+        background-color: rgba(74, 144, 226, 0.1);
+        color: var(--primary-solid);
+        border-color: rgba(74, 144, 226, 0.2);
+    }
+
+    /* --- 🟢 🟡 🔴 🔵 🟠 إضافات الألوان الجديدة --- */
+    .rendered-content .color-green { color: var(--success); transition: all 0.3s var(--transition-smooth); }
+    .rendered-content .color-blue { color: var(--primary-solid); transition: all 0.3s var(--transition-smooth); }
+    .rendered-content .color-red { color: var(--danger); transition: all 0.3s var(--transition-smooth); }
+    .rendered-content .color-orange { color: #FFA500; transition: all 0.3s var(--transition-smooth); }
+    .rendered-content .color-yellow { color: var(--warning-dark-text); transition: all 0.3s var(--transition-smooth); }
+    /* --- نهاية الإضافات --- */
+
+    /* Dropdown Styles */
+    .dropdown-select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid var(--primary-solid);
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-primary);
+        font-size: 16px;
+        margin-bottom: 20px;
+        outline: none;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .dropdown-select:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: rgba(0,0,0,0.05);
+    }
+    .dropdown-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: var(--primary-solid);
+        font-family: var(--font-primary);
+    }
+
+  </style>
+  <script>
+    // --- Enhanced Protection Script ---
+    (function() {
+      // 1. Disable Right-Click
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+      });
+
+      // 2. Disable Keyboard Shortcuts
+      document.addEventListener('keydown', function(e) {
+        // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S, Ctrl+P
+        if (e.keyCode == 123 || 
+            (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || 
+            (e.ctrlKey && e.keyCode == 85) ||
+            (e.ctrlKey && e.keyCode == 83) ||
+            (e.ctrlKey && e.keyCode == 80)) {
+          e.preventDefault();
+          return false;
+        }
+        // Disable Ctrl+C, Ctrl+A, Ctrl+X
+        if (e.ctrlKey && (e.keyCode == 67 || e.keyCode == 65 || e.keyCode == 88)) {
+           e.preventDefault();
+           return false;
+        }
+      });
+
+      // 3. Enhanced DevTools Detection
+      const devtools = { open: false };
+      const threshold = 160;
+
+      const checkDevTools = () => {
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
         
-        <button class="invisible-button" onclick="changeImage()"></button>
-    </div>
+        // Check for devtools open by checking console
+        const start = performance.now();
+        console.log(start);
+        console.clear();
+        const end = performance.now();
+        const timeThreshold = end - start > 100;
+        
+        if ((widthThreshold || heightThreshold || timeThreshold) && !devtools.open) {
+          devtools.open = true;
+          document.body.innerHTML = '';
+          document.body.style.backgroundColor = '#FFFFFF';
+          document.body.style.display = 'flex';
+          document.body.style.justifyContent = 'center';
+          document.body.style.alignItems = 'center';
+          document.body.style.fontFamily = 'Arial, sans-serif';
+          document.body.innerHTML = '<h1 style="color: red; text-align: center;">تم اكتشاف محاولة غير مصرح بها للوصول إلى أدوات المطورين</h1>';
+        }
+      };
+      
+      setInterval(checkDevTools, 500);
+      
+      // 4. Disable text selection and copy
+      document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      document.addEventListener('cut', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      document.addEventListener('paste', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      // 5. Disable drag and drop
+      document.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      document.addEventListener('drop', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      // 6. Disable text selection by preventing selection events
+      document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+        return false;
+      });
+    })();
+  </script>
+</head>
+<body>
 
-    <script>
-        // وظيفة تغيير الصورة عند النقر على الزر
-        function changeImage() {
-            // تغيير الصورة
-            document.getElementById('main-bg').style.backgroundImage = "url('2.jpg')";
+  <div id="splash-screen">
+    <div class="splash-container">
+      <div class="background-elements">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+      </div>
+      
+      <div class="particles-container" id="particles"></div>
+      
+      <div class="logo-container">
+        <div class="letters-wrapper" dir="ltr">
+          <div class="letter N">N</div>
+          <div class="letter E">E</div>
+          <div class="letter O">O</div>
+          <div class="letter M">M</div>
+        </div>
+      </div>
+      
+      <div class="loading-bar">
+        <div class="loading-progress"></div>
+      </div>
+      
+      <div class="tagline"></div>
+    </div>
+  </div>
+
+  <div class="app" style="display: none;">
+    <div class="viewport">
+
+      <div id="college-screen" class="screen" data-screen="college-screen">
+          
+          <div class="pull-to-refresh-loader" id="ptr-loader">
+              <div class="spinner"></div>
+          </div>
+
+          <div class="card" id="college-screen-card">
+              <div id="downloaded-content-section" style="display: none;">
+                  <div id="downloadedList" class="list"></div>
+                  <hr style="margin: 25px 0; border: none; border-top: 1px solid var(--primary-solid);">
+              </div>
+
+              <div id="collegesListContainer" style="display:none; margin-top: 25px;">
+                   <!-- Changed from list to dropdowns -->
+                   <div id="selection-form">
+                       <label for="college-select" class="dropdown-label">اختر الكلية</label>
+                       <select id="college-select" class="dropdown-select">
+                           <option value="" disabled selected>...جاري تحميل الكليات</option>
+                       </select>
+
+                       <label for="year-select" class="dropdown-label">اختر السنة</label>
+                       <select id="year-select" class="dropdown-select" disabled>
+                           <option value="" disabled selected>يرجى اختيار الكلية أولاً</option>
+                       </select>
+
+                       <button id="next-step-btn" class="btn btn-primary" disabled style="margin-top: 10px;">استمرار</button>
+                   </div>
+              </div>
+          </div>
+      </div>
+      <div id="year-screen" class="screen" data-screen="year-screen">
+          <div class="card"><h2 id="selected-college-title">اختر سنتك</h2><div id="yearsList" class="list"></div></div>
+      </div>
+
+      <div id="subject-screen" class="screen" data-screen="subject-screen">
+          <div class="card">
+            <h2 id="materials-title">اختر المادة</h2>
             
-            // إضافة حالة جديدة في سجل المتصفح (الحدث الزماني)
-            // هذا يمنع الخروج من الصفحة عند الضغط على زر الرجوع
-            history.pushState({page: 2}, "Image 2", "#second-image");
+            <div id="subjectsList" class="list"></div>
+          </div>
+      </div>
+      <div id="category-screen" class="screen" data-screen="category-screen">
+          <div class="card">
+            <h2 id="category-title">اختر التصنيف</h2>
+            <div class="list">
+                <button class="choice-frame" data-category="دورات">نماذج</button>
+                <button class="choice-frame" data-category="بنوك">بنوك </button>
+                <button class="choice-frame" data-category="أفكار">أفكار </button>
+                <button id="fav-category-btn" class="choice-frame" data-category="المفضلة">المـ<span class="fav-star-wrapper"><span class="fav-star">⭐</span></span>ـضلة</button>
+            </div>
+          </div>
+      </div>
+
+      <div id="list-view-screen" class="screen" data-screen="list-view-screen">
+        <div class="card">
+            <h2 id="list-view-title" style="display: none;"></h2>
+            <div id="list-view-container" class="list"></div>
+        </div>
+      </div>
+
+      <div id="question-screen" class="screen" data-screen="question-screen">
+        <div class="card" role="region" aria-label="قائمة الأسئلة"><div id="questions-list-container"></div></div>
+      </div>
+
+      <button id="floatingMenuBtn" aria-label="قائمة الخيارات">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+    </div>
+    <div id="scroll-indicator-dot"></div>
+  </div>
+
+  <div id="floatingMenu" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true">
+        <button class="close-btn" aria-label="إغلاق" onclick="toggleFloatingMenu(false)">&times;</button>
+        <h3 style="text-align:center;"></h3>
+        <div id="floating-menu-container"></div>
+    </div>
+  </div>
+
+  <div id="year-choice-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="hideModal('year-choice-modal')">&times;</button>
+        <h3 id="year-choice-title"></h3>
+        <div class="list" style="margin-top: 20px;">
+            <button id="full-content-btn" class="btn btn-primary">المحتوى الكامل</button>
+            <button id="sample-content-btn" class="btn btn-secondary">عرض العينة</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="statsModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="hideModal('statsModal')">&times;</button>
+        <div class="stats-container"><h3></h3><div class="chart-container"><div id="statCircle" class="stat-circle" style="--percentage: 0;"><span id="percentageText">0%</span></div></div><div class="stats-details"><div class="stat-item"><span id="solvedCount">0</span><label>المحلولة</label></div><div class="stat-item"><span id="correctCount">0</span><label>الصحيحة</label></div><div class="stat-item"><span id="wrongCount">0</span><label>الخاطئة</label></div></div></div></div>
+  </div>
+
+  <div id="subjectStatsModal" class="modal-overlay">
+      <div class="modal-content">
+          <button class="close-btn" onclick="hideModal('subjectStatsModal')">&times;</button>
+          <h3 id="subjectStatsTitle">إحصائيات المادة</h3>
+          <div id="subjectStatsDetails" style="margin-top: 20px;">
+              </div>
+      </div>
+  </div>
+
+  <div id="explanation-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="hideModal('explanation-modal')">&times;</button>
+        <h3 id="modal-title"></h3><div id="modal-explanation-text" class="rendered-content"></div></div>
+  </div>
+
+  <div id="note-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-btn" onclick="hideModal('note-modal')">&times;</button>
+      <h3 id="note-modal-title"></h3>
+      <div id="note-modal-content-wrapper" style="margin-top: 15px;">
+        <textarea id="note-textarea"></textarea>
+        <button id="save-note-btn" class="btn btn-primary" style="margin-top: 15px; margin-bottom: 0;">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-note-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-btn" onclick="hideModal('view-note-modal')">&times;</button>
+      <h3 id="view-note-title"></h3>
+      <div id="view-note-text" class="rendered-content" style="line-height: 1.6; margin-top: 15px; margin-bottom: 20px;"></div>
+      <div id="view-note-actions" style="display: flex; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px;">
+        <button id="edit-note-btn" class="btn btn-secondary" style="flex: 1; margin: 0; padding: 10px; font-size: 14px;">تعديل</button>
+        <button id="delete-note-btn" class="btn btn-primary" style="flex: 1; margin: 0; padding: 10px; font-size: 14px; background: var(--danger); border-color: var(--danger);">حذف</button>
+      </div>
+    </div>
+  </div>
+  <div id="codeModal" class="modal-overlay">
+      <div class="modal-content">
+          <button class="close-btn" onclick="closeCodeModal()">&times;</button>
+
+          <div id="code-entry-view">
+              <h3 id="code-entry-title"></h3>
+              <input id="codeInput" placeholder="الكود هنا" style="width:100%; padding:12px; margin-top:10px; border-radius:10px; border:1px solid var(--border); background: var(--bg); color: var(--text); font-family: var(--font-primary); font-weight: 700;" />
+              <div style="display:flex; gap:10px; margin-top:15px;">
+                  <button id="applyCodeBtn" class="btn btn-primary" style="flex:1; margin:0;">تحقق</button>
+                  <button onclick="closeCodeModal()" class="btn btn-secondary" style="flex:1; margin:0;">إلغاء</button>
+              </div>
+          </div>
+
+          <div id="code-success-view" style="display: none; text-align: center;">
+              <h3>✅ تم بنجاح</h3>
+              <p id="code-success-message" style="color: var(--text-subtle);"></p>
+              <button id="viewContentBtn" class="btn btn-primary" style="margin-top: 15px;">عرض المحتوى</button>
+          </div>
+      </div>
+  </div>
+    
+  <div id="paymentModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closePaymentModal()">&times;</button>
+        <h3 style="text-align: center;">اختر طريقة الدفع</h3>
+        <div class="payment-options-container">
+            <div class="payment-option">
+                <h4>شام كاش</h4>
+                <img src="shamcash.jpg" alt="شام كاش">
+                <a href="shamcash.jpg" download="shamcash.jpg" class="btn btn-primary" style="text-decoration: none;">تحميل الصورة</a>
+            </div>
+            <div class="payment-option">
+                <h4>سيرتيل كاش </h4>
+                <img src="syriatelcash.jpg" alt="سيريتل كاش">
+                <a href="syriatelcash.jpg" download="syriatelcash.jpg" class="btn btn-primary" style="text-decoration: none;">تحميل الصورة</a>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script>
+    // إنشاء الجسيمات العشوائية للافتتاحية
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 30;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // مواقع عشوائية
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const delay = Math.random() * 5;
+        const duration = 3 + Math.random() * 2;
+        
+        particle.style.left = `${left}%`;
+        particle.style.top = `${top}%`;
+        particle.style.animationDelay = `${delay}s`;
+        particle.style.animationDuration = `${duration}s`;
+        
+        // أحجام وألوان مختلفة
+        const size = 4 + Math.random() * 6;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        const colorValue = Math.random();
+        if (colorValue < 0.7) {
+          particle.style.backgroundColor = 'var(--neom-blue)';
+        } else if (colorValue < 0.9) {
+          particle.style.backgroundColor = 'var(--neom-green)';
+        } else {
+          particle.style.backgroundColor = 'var(--neom-light-blue)';
+        }
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    // الانتقال من الافتتاحية إلى التطبيق الرئيسي
+    function transitionToApp() {
+      const splashScreen = document.getElementById('splash-screen');
+      const app = document.querySelector('.app');
+      
+      // إضافة تأثير اختفاء مع تحريك
+      splashScreen.style.opacity = '0';
+      splashScreen.style.transform = 'scale(1.1)';
+      splashScreen.style.transition = 'opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      
+      setTimeout(() => {
+        splashScreen.style.display = 'none';
+        app.style.display = 'block';
+        // بدء التطبيق الرئيسي مع تأثير ظهور
+        app.style.opacity = '0';
+        app.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+          app.style.opacity = '1';
+          app.style.transform = 'translateY(0)';
+          app.style.transition = 'opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        }, 50);
+        // بدء التطبيق الرئيسي
+        initApp();
+      }, 500);
+    }
+    
+    // بدء الافتتاحية
+    document.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+      
+      // الانتقال إلى التطبيق الرئيسي بعد 4 ثوانٍ
+      setTimeout(transitionToApp, 4000);
+    });
+
+    // باقي كود التطبيق الرئيسي
+    function initApp() {
+      if (!window.supabase) {
+        console.warn("Supabase client not loaded. Attempting to run in offline mode.");
+        const offlineWarning = document.createElement('div');
+        offlineWarning.style = "background: var(--warning); color: var(--warning-dark-text); padding: 10px; text-align: center; font-weight: 700; position: fixed; top: 0; width: 100%; z-index: 5000; font-family: var(--font-content); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);";
+        offlineWarning.textContent = "أنت غير متصل بالإنترنت. سيتم عرض المحتوى المحمل سابقاً فقط.";
+        document.body.prepend(offlineWarning);
+      }
+
+      const SUPABASE_URL = 'https://makvfhaettferocwqarp.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ha3ZmaGFldHRmZXJvY3dxYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMjQ0NjMsImV4cCI6MjA4NjYwMDQ2M30.uEHtTtgMurzv-LwYoBTabfVYrGPDKoDDQcGJmUZ08LQ';
+      
+      const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+      let state = {
+          device_fp: null,
+          selectedCollege: null,
+          selectedYear: null,
+          selectedSubject: null,
+          selectedClassification: null,
+          selectedListItem: null,
+          currentContent: [],
+          currentList: [],
+          favorites: {}, // 🟢 تغيير المفضلة إلى كائن لكل مادة
+          currentGroupingKey: null,
+      };
+
+      let stats = { solved: 0, correct: 0, wrong: 0 };
+      let answeredQuestions = new Map();
+      let userNotes = new Map();
+      let navigationHistory = [];
+      let activeModalId = null;
+
+      let timerInterval = null;
+      let timerSeconds = 0;
+      let isTimerRunning = false;
+      let audioCtx;
+
+      let realtimeChannel = null;
+      
+      const floatingMenuBtn = document.getElementById('floatingMenuBtn');
+      const floatingMenu = document.getElementById('floatingMenu');
+      const statsModal = document.getElementById('statsModal');
+      const subjectStatsModal = document.getElementById('subjectStatsModal');
+      const explanationModal = document.getElementById('explanation-modal');
+      const toastContainer = document.getElementById('toast-container');
+      const questionsListContainer = document.getElementById('questions-list-container');
+      const questionScreenCard = document.querySelector('#question-screen .card');
+      const scrollIndicatorDot = document.getElementById('scroll-indicator-dot');
+      let scrollTimeout = null;
+
+      let lastScrollTop = 0;
+      questionScreenCard.addEventListener('scroll', () => {
+          const scrollTop = questionScreenCard.scrollTop;
+          if (scrollTop > lastScrollTop) {
+              floatingMenuBtn.style.opacity = '0';
+              floatingMenuBtn.style.transform = 'scale(0.8)';
+              floatingMenuBtn.style.pointerEvents = 'none';
+          } else { 
+              floatingMenuBtn.style.opacity = '1';
+              floatingMenuBtn.style.transform = 'scale(1)';
+              floatingMenuBtn.style.pointerEvents = 'auto';
+          }
+          lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+      }, { passive: true });
+
+
+      function playSound(type) {
+          try {
+              if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
+                  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              }
+              if (!audioCtx) return;
+
+              if (audioCtx.state === 'suspended') {
+                  audioCtx.resume();
+              }
+
+              const oscillator = audioCtx.createOscillator();
+              const gainNode = audioCtx.createGain();
+
+              oscillator.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
+              gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+
+              switch(type) {
+                  case 'correct':
+                      oscillator.type = 'sine';
+                      oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                      oscillator.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+                      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+                      oscillator.stop(audioCtx.currentTime + 0.3);
+                      break;
+                  case 'wrong':
+                      oscillator.type = 'sawtooth';
+                      oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                      oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+                      oscillator.stop(audioCtx.currentTime + 0.3);
+                      break;
+                  case 'click':
+                  default:
+                      oscillator.type = 'sine';
+                      oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+                      oscillator.frequency.exponentialRampToValueAtTime(660, audioCtx.currentTime + 0.1);
+                      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+                      oscillator.stop(audioCtx.currentTime + 0.1);
+                      break;
+              }
+              oscillator.start(audioCtx.currentTime);
+          } catch (e) {
+              console.error("Web Audio API error:", e);
+              audioCtx = null;
+          }
+      }
+
+      function renderContentWithFeatures(text) {
+          if (!text) return '';
+          let processedText = text;
+          
+          // --- إضافة: معالجة الرموز الملونة والسطر الجديد ---
+          // Gg (أخضر)
+          processedText = processedText.replace(/Gg(.*?)Gg/gs, '<span class="color-green">$1</span>');
+          // Bb (أزرق)
+          processedText = processedText.replace(/Bb(.*?)Bb/gs, '<span class="color-blue">$1</span>');
+          // Rr (أحمر)
+          processedText = processedText.replace(/Rr(.*?)Rr/gs, '<span class="color-red">$1</span>');
+          // Oo (برتقالي)
+          processedText = processedText.replace(/Oo(.*?)Oo/gs, '<span class="color-orange">$1</span>');
+          // Yy (أصفر)
+          processedText = processedText.replace(/Yy(.*?)Yy/gs, '<span class="color-yellow">$1</span>');
+          // معالجة رمز # لسطر جديد
+          processedText = processedText.replace(/#/g, '<br>');
+          // --- نهاية الإضافة ---
+
+          processedText = processedText.replace(/\|\|(.*?)\|\|/g, '<span class="highlight-red">$1</span>');
+          processedText = processedText.replace(/\[(.*?)\]/g, '<span class="highlight-green">$1</span>');
+          processedText = processedText.replace(/\((.*?)\)/g, '$1');
+          processedText = processedText.replace(/\/\/(.*?)\/\//g, '<span class="highlight-blue">$1</span>');
+          
+          const urlRegex = /(https?:\/\/[^\s]+)/g;
+          processedText = processedText.replace(urlRegex, (url) => {
+              if (/\.(jpeg|jpg|gif|png|svg)$/i.test(url)) {
+                  return `<img src="${url}" alt="صورة توضيحية" loading="lazy">`;
+              } else if (/\.(mp4|webm|ogg)$/i.test(url)) {
+                  return `<video controls controlsList="nodownload"><source src="${url}" type="video/mp4">المتصفح لا يدعم عرض الفيديو.</video>`;
+              } else if (/\.(mp3|wav|ogg|m4a)$/i.test(url)) {
+                  return `<audio controls controlsList="nodownload"><source src="${url}" type="audio/mpeg">المتصفح لا يدعم تشغيل الصوت.</audio>`;
+              } else if (/\.html$/i.test(url)) {
+                   return `<iframe src="${url}" title="محتوى مضمن"></iframe>`;
+              }
+              return `<a href="${url}" target="_blank">${url}</a>`;
+          });
+          return processedText;
+      }
+      
+      function extractSortNumber(item) {
+          const text = item.question || item.idea_title || '';
+          
+          const match = text.match(/^\s*\(\s*(\d+)\s*\)/); 
+          
+          if (match && match[1]) {
+              return parseInt(match[1], 10);
+          }
+          return Infinity; 
+      }
+
+      const handleQuestionScroll = () => {
+          if (scrollTimeout) clearTimeout(scrollTimeout);
+          scrollIndicatorDot.classList.add('visible');
+
+          const scrollableHeight = questionScreenCard.scrollHeight - questionScreenCard.clientHeight;
+          if (scrollableHeight > 0) {
+              const progress = questionScreenCard.scrollTop / scrollableHeight;
+              const trackHeight = window.innerHeight - scrollIndicatorDot.offsetHeight;
+              const newTop = progress * trackHeight;
+              scrollIndicatorDot.style.top = `${Math.max(0, Math.min(newTop, trackHeight))}px`;
+          }
+
+          scrollTimeout = setTimeout(() => {
+              scrollIndicatorDot.classList.remove('visible');
+          }, 1500);
+      };
+      
+      function showModal(modalId, replace = false) {
+          if (activeModalId && activeModalId !== modalId) {
+              const oldModal = document.getElementById(activeModalId);
+              if (oldModal) oldModal.classList.remove('active');
+          }
+          
+          const modal = document.getElementById(modalId);
+          if (!modal) return;
+
+          modal.classList.add('active');
+          activeModalId = modalId;
+
+          const currentScreen = navigationHistory[navigationHistory.length - 1] || 'college-screen';
+          const newState = { 
+              screen: currentScreen, 
+              modal: modalId, 
+              nav: [...navigationHistory] 
+          };
+
+          if (replace) {
+              history.replaceState(newState, '', '#' + modalId);
+          } else {
+              history.pushState(newState, '', '#' + modalId);
+          }
+      }
+
+      function hideModal(modalId, goBack = true) {
+          const modal = document.getElementById(modalId);
+          if (!modal) return;
+
+          modal.classList.remove('active');
+
+          if (activeModalId === modalId) {
+              activeModalId = null;
+              if (goBack && history.state && history.state.modal === modalId) {
+                  history.back();
+              }
+          }
+      }
+
+      function showScreen(screenId, push = false) {
+          if (push && activeModalId) {
+              const modal = document.getElementById(activeModalId);
+              if (modal) modal.classList.remove('active');
+              activeModalId = null;
+          }
+
+          if (document.getElementById('question-screen').classList.contains('active') && screenId !== 'question-screen') {
+              saveScrollPosition();
+          }
+
+          document.querySelectorAll('.screen').forEach(s => {
+              s.classList.remove('active', 'slide-in');
+          });
+          
+          const target = document.getElementById(screenId);
+          if (!target) return;
+
+          // إضافة تأثير انتقالي سلس للشاشات
+          target.style.opacity = '0';
+          target.style.transform = 'translateY(10px)';
+          
+          setTimeout(() => {
+              target.style.opacity = '1';
+              target.style.transform = 'translateY(0)';
+          }, 10);
+
+          if (screenId === 'question-screen') {
+              document.body.classList.add('question-mode-active');
+              questionScreenCard.addEventListener('scroll', handleQuestionScroll, { passive: true });
+          } else {
+              document.body.classList.remove('question-mode-active');
+              questionScreenCard.removeEventListener('scroll', handleQuestionScroll);
+              scrollIndicatorDot.classList.remove('visible');
+              floatingMenuBtn.style.opacity = '1';
+              floatingMenuBtn.style.transform = 'scale(1)';
+              floatingMenuBtn.style.pointerEvents = 'auto';
+          }
+
+          target.classList.add('active');
+          const card = target.querySelector('.card');
+          
+          if (card && screenId !== 'question-screen') { 
+              card.scrollTop = 0;
+          }
+
+          if (push) {
+              if (navigationHistory[navigationHistory.length - 1] !== screenId) {
+                  navigationHistory.push(screenId);
+                  history.pushState({ screen: screenId, nav: [...navigationHistory] }, '', '#' + screenId);
+              }
+          }
+      }
+
+      window.onpopstate = (e) => {
+          const state = e.state;
+          const currentActiveScreen = document.querySelector('.screen.active')?.id;
+
+          if (currentActiveScreen === 'question-screen' && (!state || state.screen !== 'question-screen')) {
+              saveScrollPosition();
+          }
+
+          if (state && state.screen) {
+              navigationHistory = state.nav || ['college-screen'];
+              
+              if (currentActiveScreen !== state.screen) {
+                  showScreen(state.screen, false);
+              }
+          } else {
+              navigationHistory = ['college-screen'];
+              showScreen('college-screen', false);
+          }
+
+          if (state && state.modal) {
+              if (activeModalId !== state.modal) {
+                  const modal = document.getElementById(state.modal);
+                  if (modal) modal.classList.add('active');
+                  activeModalId = state.modal;
+                  
+                  if(state.modal === 'floatingMenu') renderFloatingMenu();
+              }
+          } else if (activeModalId) {
+              const modal = document.getElementById(activeModalId);
+              if (modal) modal.classList.remove('active');
+              activeModalId = null;
+          }
+      };
+
+      function saveScrollPosition() {
+          if (document.getElementById('question-screen').classList.contains('active') && state.selectedSubject && state.selectedClassification) {
+              const keyParts = ['scroll', state.selectedCollege, state.selectedYear, state.selectedSubject, state.selectedClassification, state.selectedListItem || 'main'];
+              const progressKey = keyParts.join('_');
+              localStorage.setItem(progressKey, questionScreenCard.scrollTop);
+          }
+      }
+
+      function restoreScrollPosition() {
+          if (state.selectedSubject && state.selectedClassification) {
+              const keyParts = ['scroll', state.selectedCollege, state.selectedYear, state.selectedSubject, state.selectedClassification, state.selectedListItem || 'main'];
+              const progressKey = keyParts.join('_');
+              const savedScrollTop = localStorage.getItem(progressKey);
+              if (savedScrollTop) {
+                  setTimeout(() => {
+                      questionScreenCard.scrollTop = parseInt(savedScrollTop, 10);
+                  }, 150);
+              }
+          }
+      }
+
+      async function getDeviceFingerprint() {
+        try {
+          let stored = localStorage.getItem('device_fp'); if (stored) return stored;
+          const parts = [(navigator.userAgent || ''), screen.width + 'x' + screen.height, new Date().getTimezoneOffset(), (navigator.language || '')].join('|');
+          const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(parts));
+          const arr = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+          localStorage.setItem('device_fp', arr); return arr;
+        } catch(e) { const fallback = 'fp_' + Math.random().toString(36).slice(2,12); localStorage.setItem('device_fp', fallback); return fallback; }
+      }
+
+      function toggleCollegesList(show) {
+          playSound('click');
+          const container = document.getElementById('collegesListContainer');
+          
+          if (show) {
+              container.style.display = 'block';
+              container.style.opacity = '0';
+              container.style.transform = 'translateY(10px)';
+              setTimeout(() => {
+                  container.style.opacity = '1';
+                  container.style.transform = 'translateY(0)';
+                  container.style.transition = 'opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+              }, 10);
+          } else {
+              container.style.opacity = '0';
+              container.style.transform = 'translateY(10px)';
+              setTimeout(() => {
+                  container.style.display = 'none';
+              }, 300);
+          }
+      }
+
+      async function loadMainScreen(silent = false) {
+          const downloadedSection = document.getElementById('downloaded-content-section');
+          const downloadedListEl = document.getElementById('downloadedList');
+          const collegesListContainer = document.getElementById('collegesListContainer');
+          const collegeSelect = document.getElementById('college-select');
+          const yearSelect = document.getElementById('year-select');
+          const nextBtn = document.getElementById('next-step-btn');
+
+          const downloaded = JSON.parse(localStorage.getItem('downloadedContent') || '[]');
+          const hasDownloadedContent = downloaded.length > 0;
+
+          downloadedListEl.innerHTML = '';
+          if (hasDownloadedContent) {
+              const allSubjects = new Map();
+
+              downloaded.forEach(item => {
+                  const cacheKey = `content_${item.college}_${item.year}`;
+                  const cached = localStorage.getItem(cacheKey);
+                  if (!cached) return;
+
+                  try {
+                      const parsed = JSON.parse(cached);
+                      if (parsed?.device_fp === state.device_fp && parsed.content) {
+                          const content = parsed.content || [];
+                          const subjects = [...new Set(content.map(c => c.subject || 'عام'))];
+                          
+                          allSubjects.set(cacheKey, {
+                              college: item.college,
+                              year: item.year,
+                              subjects: subjects,
+                              content: content 
+                          });
+                      }
+                  } catch (e) {
+                      console.error('Failed to parse cached content for subjects:', e);
+                  }
+              });
+
+              allSubjects.forEach((data, cacheKey) => {
+                  if (allSubjects.size > 1) {
+                      const yearTitle = document.createElement('h4');
+                      yearTitle.textContent = `${data.college} - ${data.year}`;
+                      yearTitle.style.textAlign = 'center';
+                      yearTitle.style.color = 'var(--primary-solid)';
+                      yearTitle.style.marginTop = '20px';
+                      downloadedListEl.appendChild(yearTitle);
+                  }
+
+                  data.subjects.forEach(subjectName => {
+                      const btn = document.createElement('button');
+                      btn.className = 'choice-frame';
+                      btn.textContent = subjectName;
+                      
+                      btn.onclick = () => {
+                          playSound('click');
+                          
+                          state.selectedCollege = data.college;
+                          state.selectedYear = data.year;
+                          state.currentContent = data.content;
+                          
+                          state.selectedSubject = subjectName;
+                          document.getElementById('category-title').textContent = subjectName;
+                          showScreen('category-screen', true);
+                          
+                          if (supabase) {
+                              subscribeToContentChanges(data.college, data.year);
+                          }
+                      };
+                      downloadedListEl.appendChild(btn);
+                  });
+              });
+          }
+          
+          if (hasDownloadedContent) {
+              downloadedSection.style.display = 'block';
+              collegesListContainer.style.display = 'none';
+              
+              if (!navigator.onLine) {
+                  return;
+              }
+          } else {
+              downloadedSection.style.display = 'none';
+              collegesListContainer.style.display = 'block';
+          }
+          
+          if (!supabase || !navigator.onLine) {
+              if (!hasDownloadedContent) {
+                  collegeSelect.innerHTML = '<option disabled>لا يوجد اتصال بالإنترنت</option>';
+              }
+              return;
+          }
+
+          // Reset selections
+          collegeSelect.innerHTML = '<option value="" disabled selected>...جاري تحميل الكليات</option>';
+          yearSelect.innerHTML = '<option value="" disabled selected>يرجى اختيار الكلية أولاً</option>';
+          yearSelect.disabled = true;
+          nextBtn.disabled = true;
+          
+          const { data, error } = await supabase.from('content_metadata').select('college').neq('college', null).order('college');
+          if (error) {
+              collegeSelect.innerHTML = `<option disabled>خطأ: ${error.message}</option>`;
+              throw new Error(error.message);
+          }
+          
+          const uniq = [...new Set((data || []).map(r => r.college))].filter(Boolean);
+          collegeSelect.innerHTML = '<option value="" disabled selected>اختر الكلية...</option>';
+          uniq.forEach(c => {
+              const opt = document.createElement('option');
+              opt.value = c;
+              opt.textContent = c;
+              collegeSelect.appendChild(opt);
+          });
+
+          // Add Event Listeners if not already added (simple check by replacing node or just re-adding is fine if careful)
+          // To stay safe and avoid duplicates, we'll just overwrite onchange
+          collegeSelect.onchange = async () => {
+              const selectedC = collegeSelect.value;
+              state.selectedCollege = selectedC;
+              state.selectedYear = null;
+              
+              yearSelect.innerHTML = '<option value="" disabled selected>...جاري تحميل السنوات</option>';
+              yearSelect.disabled = true;
+              nextBtn.disabled = true;
+
+              const { data: yData, error: yError } = await supabase.from('content_metadata').select('year').eq('college', selectedC).order('year');
+              
+              if (yError) {
+                   yearSelect.innerHTML = `<option disabled>خطأ</option>`;
+                   return;
+              }
+              
+              const uniqY = [...new Set((yData || []).map(r => r.year))].filter(Boolean);
+              yearSelect.innerHTML = '<option value="" disabled selected>اختر السنة...</option>';
+              uniqY.forEach(y => {
+                  const opt = document.createElement('option');
+                  opt.value = y;
+                  opt.textContent = y;
+                  yearSelect.appendChild(opt);
+              });
+              yearSelect.disabled = false;
+          };
+
+          yearSelect.onchange = () => {
+              state.selectedYear = yearSelect.value;
+              nextBtn.disabled = false;
+          };
+
+          nextBtn.onclick = () => {
+              playSound('click');
+              if (state.selectedYear) {
+                  promptYearOption(state.selectedYear);
+              }
+          };
+      }
+
+      function loadDownloadedYear(college, year) {
+          state.selectedCollege = college;
+          state.selectedYear = year;
+          const cacheKey = `content_${college}_${year}`;
+          const cached = localStorage.getItem(cacheKey);
+
+          if (cached) {
+              try {
+                  const parsed = JSON.parse(cached);
+                  if (parsed?.device_fp === state.device_fp && parsed.content) {
+                      state.currentContent = parsed.content || [];
+                      
+                      if (supabase) {
+                          subscribeToContentChanges(college, year);
+                      }
+
+                      navigationHistory = ['college-screen', 'subject-screen'];
+                      history.pushState({ screen: 'subject-screen', nav: navigationHistory }, '', '#subject-screen');
+                      
+                      renderSubjects(false);
+                      showScreen('subject-screen', false);
+                      return;
+                  }
+              } catch(e){
+                  console.error('Cache load error:', e);
+                  localStorage.removeItem(cacheKey);
+              }
+          }
+      }
+
+      async function selectCollege(college){
+          // This function is kept for backward compatibility but UI uses dropdowns now
+          if (!supabase) { showToast('لا يوجد اتصال بالإنترنت', 'danger'); return; }
+          
+          playSound('click');
+          state.selectedCollege = college;
+          document.getElementById('selected-college-title').textContent = college;
+          showScreen('year-screen', true);
+          const el = document.getElementById('yearsList');
+          el.innerHTML = '<p>...جاري التحميل</p>';
+          const { data, error } = await supabase.from('content_metadata').select('year').eq('college', college).order('year');
+          if (error) { el.innerHTML = `<p style="color:var(--danger);">خطأ: ${error.message}</p>`; return; }
+          const uniq = [...new Set((data || []).map(r => r.year))].filter(Boolean);
+          el.innerHTML = '';
+          uniq.forEach(y => {
+              const btn = document.createElement('button');
+              btn.className = 'choice-frame';
+              btn.textContent = y;
+              btn.onclick = () => { playSound('click'); promptYearOption(y); };
+              el.appendChild(btn);
+          });
+      }
+
+      function promptYearOption(year) {
+          document.getElementById('year-choice-title').textContent = `${year} - ${state.selectedCollege}`;
+          showModal('year-choice-modal');
+          
+          document.getElementById('full-content-btn').onclick = () => {
+              playSound('click');
+              hideModal('year-choice-modal', false);
+              showCodeModalForYear(year, true); 
+          };
+          document.getElementById('sample-content-btn').onclick = () => {
+              playSound('click');
+              hideModal('year-choice-modal');
+              chooseYear(year);
+          };
+      }
+
+      async function chooseYear(year, silent = false){
+          if (!supabase) { showToast('لا يوجد اتصال بالإنترنت', 'danger'); return; }
+
+          state.selectedYear = year;
+          
+          const { data, error } = await supabase.rpc('rpc_get_year_content', { p_college: state.selectedCollege, p_year: state.selectedYear, p_device_fp: state.device_fp });
+
+          if (error) {
+              return;
+          }
+
+          state.currentContent = data?.content || [];
+          if (state.currentContent.length === 0) {
+              return;
+          }
+          
+          renderSubjects(silent);
+          
+          if (!silent) {
+              subscribeToContentChanges(state.selectedCollege, state.selectedYear);
+          }
+      }
+
+      function renderSubjects(silent = false) {
+          if(!silent) showScreen('subject-screen', true);
+          document.getElementById('materials-title').textContent = `${state.selectedCollege} — ${state.selectedYear}`;
+          const el = document.getElementById('subjectsList');
+          const subjects = [...new Set(state.currentContent.map(item => item.subject || 'عام'))];
+          el.innerHTML = '';
+
+          const subjectStats = subjects.reduce((acc, subj) => {
+              const contentForSubject = state.currentContent.filter(item => (item.subject || 'عام') === subj);
+              acc[subj] = {
+                  banks: contentForSubject.filter(item => item.classification === 'بنوك').length,
+                  courses: contentForSubject.filter(item => item.classification === 'دورات').length,
+                  ideas: contentForSubject.filter(item => item.classification === 'أفكار').length,
+              };
+              return acc;
+          }, {});
+
+          subjects.forEach(subj => {
+              const wrapper = document.createElement('div');
+              wrapper.className = 'subject-item-wrapper';
+
+              const btn = document.createElement('button');
+              btn.className = 'choice-frame subject-choice-frame';
+              btn.textContent = subj;
+              btn.onclick = () => selectSubject(subj);
+              wrapper.appendChild(btn);
+
+              // 🟢 زر الإحصائيات يبقى موجوداً ويعمل لكل مادة
+              const statsBtn = document.createElement('button');
+              statsBtn.className = 'stats-btn';
+              statsBtn.title = 'إحصائيات المادة';
+              statsBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><polyline points="7 14 11 10 15 14 19 10"></polyline></svg>`;
+              statsBtn.onclick = (e) => { e.stopPropagation(); playSound('click'); showSubjectStatsModal(subj, subjectStats[subj]); };
+              wrapper.appendChild(statsBtn);
+
+              el.appendChild(wrapper);
+          });
+      }
+
+      function selectSubject(subject, silent = false){
+          playSound('click');
+          state.selectedSubject = subject;
+          document.getElementById('category-title').textContent = subject;
+          if(!silent) showScreen('category-screen', true);
+      }
+
+      document.querySelectorAll('#category-screen button[data-category]').forEach(btn => {
+          btn.onclick = () => {
+              playSound('click');
+              const classification = btn.getAttribute('data-category');
+              if (classification === 'المفضلة') {
+                  showFavorites();
+              } else {
+                  showGroupedList(classification);
+              }
+          };
+      });
+
+      function showGroupedList(classification, silent = false) {
+          state.selectedClassification = classification;
+          const filteredContent = state.currentContent.filter(item =>
+              (item.subject || 'عام') === state.selectedSubject && item.classification === classification
+          );
+
+          const isIdeasOrBanks = classification === 'أفكار' || classification === 'بنوك';
+          const primaryGroupingKey = isIdeasOrBanks ? 'lecture_name' : 'course_title';
+          const primaryGroups = [...new Set(filteredContent.map(item => item[primaryGroupingKey]).filter(Boolean))];
+          
+          if (primaryGroups.length === 0) {
+              state.currentList = filteredContent.sort((a, b) => extractSortNumber(a) - extractSortNumber(b));
+
+              if (state.currentList.length === 0) {
+                  if (!silent) return;
+              }
+              state.selectedListItem = null;
+              state.currentGroupingKey = null;
+              resetAllAnswers(true);
+              renderAllQuestions();
+              if (!silent) showScreen('question-screen', true);
+              restoreScrollPosition();
+              return;
+          }
+          
+          const container = document.getElementById('list-view-container');
+          container.innerHTML = '';
+
+          primaryGroups.forEach(groupName => {
+              const item = document.createElement('button');
+              item.className = 'choice-frame';
+              item.textContent = groupName;
+              item.onclick = () => openContentList(groupName, primaryGroupingKey);
+              container.appendChild(item);
+          });
+
+          if (!silent) showScreen('list-view-screen', true);
+      }
+
+      function openContentList(groupName, groupingKey, silent = false) {
+          playSound('click');
+          state.selectedListItem = groupName;
+          state.currentGroupingKey = groupingKey;
+          
+          state.currentList = state.currentContent.filter(item =>
+              (item.subject || 'عام') === state.selectedSubject &&
+              item.classification === state.selectedClassification &&
+              item[groupingKey] === groupName
+          ).sort((a, b) => extractSortNumber(a) - extractSortNumber(b));
+
+          resetAllAnswers(true);
+          renderAllQuestions();
+          if(!silent) showScreen('question-screen', true);
+          restoreScrollPosition();
+      }
+
+      function openContentListByLecture(lectureName, silent = false) {
+          playSound('click');
+          state.selectedListItem = lectureName;
+          state.currentGroupingKey = 'lecture_name';
+
+          state.currentList = state.currentContent.filter(item =>
+              (item.subject || 'عام') === state.selectedSubject &&
+              item.classification === 'دورات' &&
+              item.lecture_name === lectureName
+          ).sort((a, b) => extractSortNumber(a) - extractSortNumber(b));
+          
+          resetAllAnswers(true);
+          renderAllQuestions();
+          if(!silent) showScreen('question-screen', true);
+          restoreScrollPosition();
+      }
+
+      function closeCodeModal() {
+          hideModal('codeModal');
+          
+          setTimeout(() => {
+              document.getElementById('code-entry-view').style.display = 'block';
+              document.getElementById('code-success-view').style.display = 'none';
+          }, 300);
+      }
+
+      function showCodeModalForYear(year, replace = false) {
+          if (!supabase) { showToast('لا يوجد اتصال بالإنترنت لإدخال الكود', 'danger'); return; }
+
+          state.selectedYear = year;
+          document.getElementById('code-entry-title').textContent = `${year} - ${state.selectedCollege}`;
+          document.getElementById('code-entry-view').style.display = 'block';
+          document.getElementById('code-success-view').style.display = 'none';
+
+          showModal('codeModal', replace); 
+          
+          document.getElementById('codeInput').value = '';
+          document.getElementById('applyCodeBtn').onclick = async () => {
+              playSound('click');
+              const code = document.getElementById('codeInput').value.trim().toUpperCase();
+              if (!code) { 
+                  return; 
+              }
+              await applyUnlockCode(code);
+          };
+      }
+
+      async function applyUnlockCode(code) {
+          if (!supabase) { showToast('لا يوجد اتصال بالإنترنت للتحقق من الكود', 'danger'); return; }
+
+          const applyBtn = document.getElementById('applyCodeBtn');
+          const originalBtnText = applyBtn.innerHTML;
+          applyBtn.innerHTML = '...جاري التحقق';
+          applyBtn.disabled = true;
+
+          const { data, error } = await supabase.rpc('rpc_unlock_code', { 
+              p_code: code, 
+              p_device_fp: state.device_fp,
+              p_college: state.selectedCollege,
+              p_year: state.selectedYear
+          });
+
+          applyBtn.innerHTML = originalBtnText;
+          applyBtn.disabled = false;
+
+          if (error) {
+              showToast('كود خاطئ', 'danger');
+              return;
+          }
+
+          if (data?.status === 'ok') {
+              document.getElementById('code-entry-view').style.display = 'none';
+              const successMsg = document.getElementById('code-success-message');
+              successMsg.textContent = `تم فتح محتوى (${data.college} / ${data.year}) بنجاح.`;
+              document.getElementById('code-success-view').style.display = 'block';
+
+              document.getElementById('viewContentBtn').onclick = () => {
+                  playSound('click');
+                  
+                  state.currentContent = data.content || [];
+                  
+                  try {
+                    const key = `content_${data.college}_${data.year}`;
+                    const contentToStore = JSON.stringify({ device_fp: state.device_fp, content: data.content });
+                    localStorage.setItem(key, contentToStore);
+                  } catch (e) {
+                      console.error("Local storage error: ", e);
+                  }
+                  
+                  let downloaded = JSON.parse(localStorage.getItem('downloadedContent') || '[]');
+                  const alreadyExists = downloaded.some(item => item.college === data.college && item.year === data.year);
+                  if (!alreadyExists) {
+                      downloaded.push({ college: data.college, year: data.year });
+                      localStorage.setItem('downloadedContent', JSON.stringify(downloaded));
+                  }
+                  
+                  closeCodeModal();
+                  
+                  // 🟢 تحسين الانتقال - إظهار المواد فوراً
+                  renderSubjects(false);
+                  subscribeToContentChanges(data.college, data.year);
+                  showScreen('subject-screen', true);
+              };
+          } else {
+              let message = 'كود خاطئ';
+              showToast(message, 'danger');
+          }
+      }
+
+      // 🟢 تغيير نظام المفضلة ليكون لكل مادة
+      function loadFavorites() {
+          const favs = localStorage.getItem('favorites');
+          if (favs) {
+              try {
+                  const parsed = JSON.parse(favs);
+                  // إذا كان المفضلة القديمة مصفوفة، نقوم بتحويلها للنظام الجديد
+                  if (Array.isArray(parsed)) {
+                      state.favorites = { 'عام': parsed };
+                      saveFavorites();
+                  } else {
+                      state.favorites = parsed;
+                  }
+              } catch (e) {
+                  state.favorites = {};
+              }
+          } else {
+              state.favorites = {};
+          }
+      }
+
+      function saveFavorites() {
+          localStorage.setItem('favorites', JSON.stringify(state.favorites));
+      }
+
+      function loadNotes() {
+          try {
+              const notesData = localStorage.getItem('userNotes');
+              if (notesData) {
+                  userNotes = new Map(JSON.parse(notesData));
+              }
+          } catch (e) {
+              console.error("Failed to load notes:", e);
+              userNotes = new Map();
+          }
+      }
+
+      function saveNotes() {
+          try {
+              const notesData = JSON.stringify(Array.from(userNotes.entries()));
+              localStorage.setItem('userNotes', notesData);
+          } catch (e) {
+              console.error("Failed to save notes:", e);
+          }
+      }
+
+      // 🟢 تعديل وظيفة المفضلة لتكون خاصة بكل مادة
+      function toggleFavorite(questionId) {
+          playSound('click');
+          const subject = state.selectedSubject || 'عام';
+          
+          if (!state.favorites[subject]) {
+              state.favorites[subject] = [];
+          }
+          
+          const index = state.favorites[subject].indexOf(questionId);
+          if (index > -1) {
+              state.favorites[subject].splice(index, 1);
+          } else {
+              state.favorites[subject].push(questionId);
+          }
+          saveFavorites();
+
+          const favBtn = document.querySelector(`.fav-btn[data-question-id="${questionId}"]`);
+          if (favBtn) {
+              favBtn.classList.toggle('favorited', index === -1);
+          }
+      }
+
+      // 🟢 تعديل وظيفة عرض المفضلة لتكون خاصة بكل مادة
+      function showFavorites(silent = false) {
+          state.selectedClassification = 'المفضلة';
+          state.selectedListItem = null;
+          state.currentGroupingKey = null;
+          if (state.currentContent.length === 0) {
+              return;
+          }
+          
+          const subject = state.selectedSubject || 'عام';
+          const favoriteIds = new Set(state.favorites[subject] || []);
+          
+          state.currentList = state.currentContent.filter(item => favoriteIds.has(item.id))
+                               .sort((a, b) => extractSortNumber(a) - extractSortNumber(b));
+          
+          if (state.currentList.length === 0) {
+               if (!silent) return;
+          }
+          resetAllAnswers(true);
+          renderAllQuestions();
+          if(!silent) showScreen('question-screen', true);
+          restoreScrollPosition();
+      }
+
+      function renderAllQuestions() {
+          questionsListContainer.innerHTML = '';
+          questionScreenCard.scrollTop = 0;
+
+          state.currentList.forEach((row, index) => {
+              const wrapper = document.createElement('div');
+              wrapper.className = 'question-wrapper';
+              wrapper.setAttribute('data-question-id', row.id);
+
+              
+              const textEl = document.createElement('p');
+              textEl.className = 'question-text rendered-content';
+              
+              const rawText = row.question || row.idea_title || 'لا يوجد عنوان';
+              
+              const numberMatch = rawText.match(/^\s*\(\s*(\d+)\s*\)/);
+              
+              let displayNumber;
+              let cleanedText;
+
+              if (numberMatch && numberMatch[1]) {
+                  displayNumber = numberMatch[1];
+                  cleanedText = rawText.replace(numberMatch[0], '').trim(); 
+              } else {
+                  displayNumber = index + 1;
+                  cleanedText = rawText;
+              }
+
+              const renderedQuestionText = renderContentWithFeatures(cleanedText);
+              const questionContent = `<strong class="special-text">[${displayNumber}]</strong> ${renderedQuestionText}`;
+
+              textEl.innerHTML = questionContent;
+              wrapper.appendChild(textEl);
+
+              let options = []; try { if (row.choices_json) options = JSON.parse(row.choices_json); } catch (e) { console.error('JSON parse error for ID:', row.id, e); }
+              const correctAnswerIndex = row.correct_answer ? (parseInt(row.correct_answer.replace('choice_', '')) - 1) : -1;
+
+              if (options.length > 0) {
+                  const answersDiv = document.createElement('div'); answersDiv.className = 'answers';
+                  options.forEach((option, optionIndex) => {
+                      const btn = document.createElement('button');
+                      btn.className = 'rendered-content';
+                      btn.innerHTML = renderContentWithFeatures(option);
+                      btn.onclick = () => checkAnswer(btn, row.id, optionIndex, correctAnswerIndex);
+                      answersDiv.appendChild(btn);
+                      const answeredData = answeredQuestions.get(row.id);
+                      if (answeredData) {
+                          btn.disabled = true;
+                          if (answeredData.chosenIndex === optionIndex) btn.classList.add(answeredData.isCorrect ? 'correct' : 'wrong');
+                          if (!answeredData.isCorrect && optionIndex === correctAnswerIndex) btn.classList.add('correct');
+                      }
+                  });
+                  wrapper.appendChild(answersDiv);
+              }
+              else if (row.idea_text) {
+                  const ideaTextEl = document.createElement('div'); ideaTextEl.className = 'idea-content-box rendered-content';
+                  ideaTextEl.innerHTML = renderContentWithFeatures(row.idea_text);
+                  wrapper.appendChild(ideaTextEl);
+              }
+
+              const actionsDiv = document.createElement('div'); actionsDiv.className = 'question-actions';
+              
+              const favBtn = document.createElement('button');
+              favBtn.className = 'fav-btn';
+              favBtn.textContent = '☆';
+              favBtn.setAttribute('data-question-id', row.id);
+              
+              // 🟢 تحديث حالة الزر بناءً على المفضلة الخاصة بالمادة
+              const subject = state.selectedSubject || 'عام';
+              const isFavorited = state.favorites[subject] && state.favorites[subject].includes(row.id);
+              if (isFavorited) favBtn.classList.add('favorited');
+              
+              favBtn.onclick = () => toggleFavorite(row.id);
+
+              let sourceText = '';
+              if (state.currentGroupingKey === 'course_title') {
+                  sourceText = row.lecture_name || 'محاضرة غير محددة';
+              } else if (state.currentGroupingKey === 'lecture_name') {
+                  sourceText = row.course_title || 'عنوان غير محدد';
+              } else {
+                  sourceText = row.lecture_name || row.course_title || 'مصدر';
+              }
+              const sourceBtn = document.createElement('button');
+              sourceBtn.className = 'source-btn-inline';
+              sourceBtn.textContent = sourceText;
+
+              actionsDiv.appendChild(sourceBtn);
+
+              if (row.explanation) {
+                  const explainBtn = document.createElement('button');
+                  explainBtn.className = 'explain-btn-inline';
+                  explainBtn.textContent = '❕';
+                  explainBtn.onclick = () => { playSound('click'); showExplanationModal(row.explanation); };
+                  actionsDiv.appendChild(explainBtn);
+              }
+
+              const noteBtn = document.createElement('button');
+              noteBtn.className = 'note-btn-inline';
+              noteBtn.textContent = '🖊️';
+              noteBtn.setAttribute('data-question-id', row.id);
+              if (userNotes.has(row.id)) {
+                  noteBtn.classList.add('has-note');
+              }
+              
+              noteBtn.onclick = () => {
+                  playSound('click');
+                  const noteText = userNotes.get(row.id);
+                  if (noteText) {
+                      showViewNoteModal(row.id, noteText);
+                  } else {
+                      showNoteModal(row.id, false);
+                  }
+              };
+              
+              actionsDiv.appendChild(noteBtn);
+
+              actionsDiv.appendChild(favBtn);
+              
+              wrapper.appendChild(actionsDiv);
+              questionsListContainer.appendChild(wrapper);
+          });
+      }
+
+      function checkAnswer(btn, qId, chosenIndex, correctIndex) {
+          if (btn.disabled) return;
+          const isCorrect = chosenIndex === correctIndex;
+          const answersDiv = btn.parentElement;
+          Array.from(answersDiv.children).forEach((b, idx) => {
+              b.disabled = true;
+              if (idx === correctIndex) b.classList.add('correct');
+          });
+          if (!isCorrect) {
+              btn.classList.add('wrong');
+          }
+          if (!answeredQuestions.has(qId)) {
+              stats.solved++;
+              if (isCorrect) {
+                  stats.correct++;
+                  playSound('correct');
+              } else {
+                  stats.wrong++;
+                  playSound('wrong');
+              }
+              answeredQuestions.set(qId, { chosenIndex, isCorrect });
+          }
+      }
+
+      function solveAllQuestions() {
+          playSound('click');
+          if (!state.currentList.length) { return; }
+          state.currentList.forEach(row => {
+              const wrapper = questionsListContainer.querySelector(`[data-question-id="${row.id}"]`); if (!wrapper) return;
+              const answers = wrapper.querySelectorAll('.answers button');
+              if (answers.length > 0) {
+                   const correctIdx = row.correct_answer ? (parseInt(row.correct_answer.replace('choice_', '')) - 1) : -1;
+                  if (correctIdx > -1 && !answeredQuestions.has(row.id)) {
+                       checkAnswer(answers[correctIdx], row.id, correctIdx, correctIdx);
+                  }
+              }
+          });
+          toggleFloatingMenu(false);
+      }
+
+      function resetAllAnswers(silent = false) {
+          if (!silent) playSound('click');
+          if (!state.currentList.length && !silent) { toggleFloatingMenu(false); return; }
+          stats = { solved: 0, correct: 0, wrong: 0 }; answeredQuestions.clear(); renderAllQuestions();
+          if (!silent) { toggleFloatingMenu(false); }
+      }
+
+      function formatTime(seconds) {
+          const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+          const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+          const s = (seconds % 60).toString().padStart(2, '0');
+          return `${h}:${m}:${s}`;
+      }
+
+      function updateTimerDisplay() {
+          const el = document.getElementById('timer-display');
+          if (el) el.textContent = formatTime(timerSeconds);
+      }
+
+      function toggleTimer() {
+          playSound('click');
+          const btn = document.getElementById('timer-toggle-btn');
+          if (!btn) return;
+          if (isTimerRunning) {
+              clearInterval(timerInterval);
+              isTimerRunning = false;
+              btn.textContent = '▶️ تشغيل المؤقت';
+              btn.style.transform = 'scale(1)';
+          } else {
+              timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+              isTimerRunning = true;
+              btn.textContent = '⏸️ إيقاف المؤقت';
+              btn.style.transform = 'scale(1.02)';
+          }
+      }
+      
+      function showPaymentModal() {
+        if (!navigator.onLine) {
+            showToast('يجب أن تكون متصلاً بالإنترنت لشراء كود.', 'warning');
+            return;
+        }
+        toggleFloatingMenu(false, false);
+        showModal('paymentModal', true); 
+      }
+
+      function closePaymentModal() {
+        hideModal('paymentModal');
+      }
+
+      function goHome() {
+          playSound('click');
+          toggleFloatingMenu(false, false);
+          
+          const isCollegeScreen = document.getElementById('college-screen').classList.contains('active');
+          const collegesListContainer = document.getElementById('collegesListContainer');
+
+          if (isCollegeScreen && collegesListContainer.style.display === 'none') {
+              toggleCollegesList(true);
+          } else {
+              showScreen('college-screen', false);
+              history.replaceState({ screen: 'college-screen', nav: ['college-screen'] }, '', '#college-screen');
+              loadMainScreen();
+          }
+      }
+
+      function renderFloatingMenu() {
+        const container = document.getElementById('floating-menu-container');
+        const isQuestionScreen = document.getElementById('question-screen').classList.contains('active');
+        const isQuestionCategory = ['بنوك', 'دورات'].includes(state.selectedClassification);
+        const isDark = document.body.classList.contains('dark-mode');
+
+        const themeIcon = isDark ? `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>` : `<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const telegramIcon = `<svg viewBox="0 0 24 24"><path d="M22 2L11 13" stroke-width="2"></path><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke-width="2"></path></svg>`;
+
+        const isCollegeScreen = document.getElementById('college-screen').classList.contains('active');
+        const hasDownloaded = (JSON.parse(localStorage.getItem('downloadedContent') || '[]')).length > 0;
+        const homeIcon = `<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`;
+        
+        const homeButtonHTML = (hasDownloaded) ? `<button class="menu-icon-btn" onclick="goHome()" title="الرئيسية / عرض الكليات">${homeIcon}</button>` : '';
+
+        const downloaded = JSON.parse(localStorage.getItem('downloadedContent') || '[]');
+        let isCurrentYearPurchased = false;
+        if (state.selectedCollege && state.selectedYear) {
+            isCurrentYearPurchased = downloaded.some(item => 
+                item.college === state.selectedCollege && item.year === state.selectedYear
+            );
         }
 
-        // الاستماع لحدث الضغط على زر الرجوع (Back Button)
-        window.onpopstate = function(event) {
-            // عند الرجوع، نعيد الصورة الأولى
-            document.getElementById('main-bg').style.backgroundImage = "url('1.jpg')";
-        };
+        let menuHTML = `<div class="menu-icon-btn-group">
+            ${homeButtonHTML}
+            <button class="menu-icon-btn" onclick="toggleTheme()" title="تبديل الوضع">${themeIcon}</button>
+            <a href="https://t.me/NEOMplatform" target="_blank" class="menu-icon-btn" title="قناتنا على تلغرام">${telegramIcon}</a>
+        </div>
+        <div class="menu-group-title"></div>`;
+        
+        if (!isCurrentYearPurchased) {
+            menuHTML += `<button class="menu-large-btn" onclick="showPaymentModal()">شراء كود</button>`;
+        }
 
-        // كود إضافي لضمان منع التمرير باللمس على الهواتف
-        document.addEventListener('touchmove', function(e) {
-            // السماح بالنقر ومنع السحب فقط
-            if (e.target.tagName !== 'BUTTON') {
+        if (isQuestionScreen) {
+            if (isQuestionCategory) {
+                 menuHTML += `<button class="menu-secondary-btn" onclick="showStatsModal()" style="margin-top: 10px;">التقييم</button>`;
+            }
+            menuHTML += `<div class="timer-control-wrapper"><span id="timer-display">${formatTime(timerSeconds)}</span><button class="btn btn-primary" id="timer-toggle-btn" onclick="toggleTimer()">${isTimerRunning ? '⏸️ إيقاف المؤقت' : '▶️ تشغيل المؤقت'}</button></div>`;
+            if (isQuestionCategory) {
+                 menuHTML += `<div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button class="menu-secondary-btn" onclick="solveAllQuestions()" style="flex: 1; margin: 0;">✅ تصحيح</button>
+                                <button class="menu-secondary-btn" onclick="resetAllAnswers()" style="flex: 1; margin: 0;">🔄 تصفير</button>
+                             </div>`;
+            }
+        }
+        menuHTML += `<p class="menu-footer-text">جميع الحقوق محفوظة</p>`;
+        container.innerHTML = menuHTML;
+      }
+
+      function toggleFloatingMenu(show, goBack = true) {
+          if (show) {
+              renderFloatingMenu();
+              showModal('floatingMenu');
+          } else {
+              hideModal('floatingMenu', goBack);
+          }
+      }
+
+      function showToast(message, type = 'default') {
+          const t = document.createElement('div'); t.className = `toast ${type}`; t.textContent = message;
+          toastContainer.appendChild(t); setTimeout(() => t.remove(), 2500);
+      }
+
+      function showSubjectStatsModal(subject, stats) {
+          document.getElementById('subjectStatsTitle').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-solid)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align: -4px; margin-left: 8px;"><path d="M3 3v18h18"></path><polyline points="7 14 11 10 15 14 19 10"></polyline></svg> ${subject}`;
+          document.getElementById('subjectStatsDetails').innerHTML = `<div class="stat-detail-row"><span>البنوك</span><span class="stat-detail-value">${stats.banks}</span></div><div class="stat-detail-row"><span>الدورات</span><span class="stat-detail-value">${stats.courses}</span></div><div class="stat-detail-row"><span>الأفكار</span><span class="stat-detail-value">${stats.ideas}</span></div>`;
+          showModal('subjectStatsModal');
+      }
+      function hideSubjectStatsModal() { 
+          hideModal('subjectStatsModal');
+      }
+
+      function showStatsModal() {
+          playSound('click');
+          toggleFloatingMenu(false, false);
+          showModal('statsModal', true); 
+          document.getElementById('solvedCount').textContent = stats.solved;
+          document.getElementById('correctCount').textContent = stats.correct;
+          document.getElementById('wrongCount').textContent = stats.wrong;
+          const percentage = stats.solved > 0 ? Math.round((stats.correct / stats.solved) * 100) : 0;
+          document.getElementById('percentageText').textContent = `${percentage}%`;
+          document.getElementById('statCircle').style.setProperty('--percentage', percentage);
+      }
+      function hideStatsModal() { 
+          hideModal('statsModal');
+      }
+
+      function toggleTheme() {
+          playSound('click');
+          document.body.classList.toggle('dark-mode');
+          localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+          renderFloatingMenu();
+      }
+
+      function showExplanationModal(text) {
+          document.getElementById('modal-explanation-text').innerHTML = renderContentWithFeatures(text);
+          showModal('explanation-modal');
+      }
+      function hideExplanationModal() { 
+          hideModal('explanation-modal');
+      }
+
+      const noteModal = document.getElementById('note-modal');
+      const noteTextarea = document.getElementById('note-textarea');
+      
+      function showNoteModal(questionId, replace = false) {
+          const noteText = userNotes.get(questionId) || '';
+          noteTextarea.value = noteText;
+          noteModal.setAttribute('data-current-question-id', questionId);
+          showModal('note-modal', replace);
+          noteTextarea.focus();
+      }
+
+      function hideNoteModal() {
+          hideModal('note-modal');
+          noteTextarea.value = '';
+          noteModal.removeAttribute('data-current-question-id');
+      }
+
+      function saveNoteAndClose() {
+          const questionId = noteModal.getAttribute('data-current-question-id');
+          if (!questionId) return;
+
+          const noteText = noteTextarea.value.trim();
+          const noteBtn = document.querySelector(`.note-btn-inline[data-question-id="${questionId}"]`);
+
+          if (noteText) {
+              userNotes.set(questionId, noteText);
+              if (noteBtn) noteBtn.classList.add('has-note');
+          } else {
+              userNotes.delete(questionId);
+              if (noteBtn) noteBtn.classList.remove('has-note');
+          }
+
+          saveNotes();
+          hideNoteModal();
+      }
+
+      function showViewNoteModal(questionId, noteText) {
+          document.getElementById('view-note-text').innerHTML = renderContentWithFeatures(noteText);
+          
+          document.getElementById('edit-note-btn').onclick = () => {
+              playSound('click');
+              hideModal('view-note-modal', false);
+              showNoteModal(questionId, true);
+          };
+          
+          document.getElementById('delete-note-btn').onclick = () => {
+              playSound('click');
+              deleteNote(questionId);
+              hideModal('view-note-modal');
+          };
+
+          showModal('view-note-modal');
+      }
+
+      function deleteNote(questionId) {
+          if (userNotes.has(questionId)) {
+              userNotes.delete(questionId);
+              saveNotes();
+
+              const noteBtn = document.querySelector(`.note-btn-inline[data-question-id="${questionId}"]`);
+              if (noteBtn) {
+                  noteBtn.classList.remove('has-note');
+              }
+              
+              showToast('تم حذف الملاحظة', 'success');
+          }
+      }
+
+      function unsubscribeFromChanges() {
+          if (realtimeChannel) { supabase.removeChannel(realtimeChannel); realtimeChannel = null; }
+      }
+      
+      async function refreshContent(college, year, silent = false) {
+          if (!supabase) { return false; }
+
+          if (!college || !year) {
+               return false;
+          }
+
+          try {
+              const { data, error } = await supabase.rpc('rpc_get_year_content', { 
+                  p_college: college, 
+                  p_year: year, 
+                  p_device_fp: state.device_fp 
+              });
+              if (error) throw error;
+
+              if (data && data.content) {
+                  const key = `content_${college}_${year}`;
+                  const contentToStore = JSON.stringify({ device_fp: state.device_fp, content: data.content });
+                  localStorage.setItem(key, contentToStore);
+                  
+                  if (!silent) showToast('تم تحديث المحتوى بنجاح!', 'success');
+                  
+                  if (college === state.selectedCollege && year === state.selectedYear) {
+                       state.currentContent = data.content;
+                       renderSubjects(true);
+                       
+                       if (document.getElementById('list-view-screen').classList.contains('active')) {
+                           showGroupedList(state.selectedClassification, true);
+                       } else if (document.getElementById('question-screen').classList.contains('active')) {
+                           if (state.selectedClassification === 'المفضلة') {
+                               showFavorites(true);
+                           } else {
+                               showGroupedList(state.selectedClassification, true);
+                           }
+                       }
+                  }
+                  return true;
+              }
+              return false;
+          } catch (e) {
+               console.error(`Failed to refresh ${college}-${year}:`, e);
+               return false;
+          }
+      }
+
+      async function handleGlobalRefresh() {
+          if (!navigator.onLine) {
+              showToast('لا يوجد اتصال بالإنترنت للتحديث.', 'warning');
+              return;
+          }
+          if (!supabase) {
+              showToast('خطأ في الاتصال، لا يمكن التحديث.', 'danger');
+              return;
+          }
+
+          playSound('click');
+          let onlineSuccess = false;
+          let localSuccessCount = 0;
+          
+          try {
+              await loadMainScreen(true);
+              onlineSuccess = true;
+          } catch (e) {
+              console.error("Failed to refresh college list:", e);
+          }
+
+          const downloaded = JSON.parse(localStorage.getItem('downloadedContent') || '[]');
+          if (downloaded.length > 0) {
+              const updatePromises = downloaded.map(item => refreshContent(item.college, item.year, true));
+              const results = await Promise.all(updatePromises);
+              localSuccessCount = results.filter(Boolean).length;
+          }
+          
+          await loadMainScreen();
+
+          if (onlineSuccess || localSuccessCount > 0) {
+               showToast('تم التحديث بنجاح', 'success');
+          }
+      }
+
+      function subscribeToContentChanges(college, year) {
+          if (!supabase) { return; }
+
+          unsubscribeFromChanges();
+          
+          const cacheKey = `content_${college}_${year}`;
+          const isDownloaded = localStorage.getItem(cacheKey) !== null;
+
+          realtimeChannel = supabase.channel(`public:content_bank:college=eq.${college}`)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'content_bank', filter: `college=eq.${college}`},
+              async (payload) => { 
+                  if (payload.new?.year === year || (payload.old?.id && state.currentContent.some(item => item.id === payload.old.id))) {
+                      
+                      if (isDownloaded) {
+                          await refreshContent(college, year, false);
+                      } else {
+                          await chooseYear(year, true);
+
+                      }
+                  }
+              }
+            ).subscribe();
+      }
+
+      (async function initApp(){
+        showScreen('college-screen', false);
+
+        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        state.device_fp = await getDeviceFingerprint();
+        loadFavorites();
+        loadNotes();
+
+        floatingMenuBtn.addEventListener('click', () => toggleFloatingMenu(true));
+        
+        floatingMenu.addEventListener('click', (e) => { if(e.target === floatingMenu) hideModal('floatingMenu'); });
+        statsModal.addEventListener('click', (e) => { if (e.target === statsModal) hideModal('statsModal'); });
+        subjectStatsModal.addEventListener('click', (e) => { if (e.target === subjectStatsModal) hideModal('subjectStatsModal'); });
+        explanationModal.addEventListener('click', (e) => { if (e.target === explanationModal) hideModal('explanation-modal'); });
+        
+        document.getElementById('note-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'note-modal') hideModal('note-modal');
+        });
+        document.getElementById('save-note-btn').addEventListener('click', saveNoteAndClose);
+
+        document.getElementById('view-note-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'view-note-modal') hideModal('view-note-modal');
+        });
+
+        document.getElementById('year-choice-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'year-choice-modal') hideModal('year-choice-modal');
+        });
+        document.getElementById('codeModal').addEventListener('click', (e) => {
+            if (e.target.id === 'codeModal') closeCodeModal();
+        });
+        document.getElementById('paymentModal').addEventListener('click', (e) => {
+            if (e.target.id === 'paymentModal') closePaymentModal();
+        });
+
+        const collegeScreen = document.getElementById('college-screen');
+        const collegeCard = document.getElementById('college-screen-card');
+        const ptrLoader = document.getElementById('ptr-loader');
+        let startY = 0;
+        let pullDistance = 0;
+        let isRefreshing = false;
+        const pullThreshold = 70;
+        
+        collegeScreen.addEventListener('touchstart', (e) => {
+            if (isRefreshing || collegeCard.scrollTop !== 0) return;
+            if (!navigator.onLine) return;
+            startY = e.touches[0].pageY;
+        }, { passive: true });
+
+        collegeScreen.addEventListener('touchmove', (e) => {
+            if (isRefreshing || !navigator.onLine) return;
+            
+            const currentY = e.touches[0].pageY;
+            pullDistance = currentY - startY;
+
+            if (pullDistance > 0 && collegeCard.scrollTop === 0) {
                 e.preventDefault();
+                const moveDistance = Math.min(pullDistance, pullThreshold + 20);
+                const pullRatio = Math.min(pullDistance / pullThreshold, 1);
+
+                ptrLoader.classList.add('visible');
+                ptrLoader.style.transform = `translateY(${moveDistance - 70}px)`;
+                ptrLoader.querySelector('.spinner').style.opacity = pullRatio;
+                ptrLoader.querySelector('.spinner').style.transform = `rotate(${pullRatio * 360}deg)`;
+                
+                collegeScreen.classList.add('ptr-down');
+                collegeCard.style.transform = `translateY(${moveDistance}px)`;
+
+            } else if (pullDistance < 0) {
+                startY = currentY; 
             }
         }, { passive: false });
-    </script>
+
+        collegeScreen.addEventListener('touchend', async (e) => {
+            if (isRefreshing || !navigator.onLine) return;
+
+            collegeCard.style.transform = 'translateY(0)';
+            collegeScreen.classList.remove('ptr-down');
+
+            if (pullDistance > pullThreshold && collegeCard.scrollTop === 0) {
+                isRefreshing = true;
+                ptrLoader.classList.add('refreshing');
+                ptrLoader.style.transform = 'translateY(0)';
+                ptrLoader.querySelector('.spinner').style.transform = 'none';
+
+                try {
+                    await handleGlobalRefresh();
+                } catch (err) {
+                    console.error("Refresh failed:", err);
+                }
+                
+                isRefreshing = false;
+                ptrLoader.classList.remove('refreshing');
+                ptrLoader.classList.remove('visible');
+                ptrLoader.style.transform = 'translateY(-70px)';
+            } else {
+                ptrLoader.classList.remove('visible');
+                ptrLoader.style.transform = 'translateY(-70px)';
+            }
+            
+            pullDistance = 0;
+            startY = 0;
+        }, { passive: true });
+
+        navigationHistory.push('college-screen');
+        history.replaceState({ screen: 'college-screen', nav: ['college-screen'] }, '', '#college-screen');
+        await loadMainScreen();
+        window.addEventListener('beforeunload', saveScrollPosition);
+
+        window.toggleTheme = toggleTheme;
+        window.showStatsModal = showStatsModal;
+        window.solveAllQuestions = solveAllQuestions;
+        window.resetAllAnswers = resetAllAnswers;
+        window.toggleTimer = toggleTimer;
+        window.toggleFloatingMenu = toggleFloatingMenu;
+        window.toggleCollegesList = toggleCollegesList;
+        window.showPaymentModal = showPaymentModal;
+        window.closePaymentModal = closePaymentModal;
+        window.goHome = goHome;
+        window.hideModal = hideModal;
+        window.hideNoteModal = hideNoteModal;
+        window.closeCodeModal = closeCodeModal;
+      })();
+    }
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
+  </script>
 </body>
 </html>
